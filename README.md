@@ -2,7 +2,7 @@
 # Setup Amazon Bedrock Agent for Text2SQL
 
 ## Introduction
- We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language in SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL based datastores.
+ We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL based datastores.
 
 ## Prerequisites
 - An active AWS Account.
