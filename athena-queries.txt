@@ -1,0 +1,47 @@
+
+(Make sure to sync s3 bucket in the Amazon Athena settings prior)
+
+1. Create Athena DB:
+CREATE DATABASE IF NOT EXISTS athena_db;
+
+2. Create table 1:
+CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
+  `Procedure_ID` string,
+  `Procedure_Name` string,
+  `Category` string,
+  `Price` integer,
+  `Duration` integer,
+  `Insurance_Covered` string,
+  `Customer_Id` integer
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION 's3://genai-sourcedata-jo4/';
+
+
+3. Create table 2:
+CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
+  `Cust_Id` integer,
+  `Customer_Name` string,
+  `Balance` integer,
+  `Past_Due` integer,
+  `Vip` string
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION 's3://genai-sourcedata-jo4/';
+
+
+
+4. View table properties:
+DESCRIBE athena_db.customers;
+DESCRIBE athena_db.procedures;
+
+4. Select all records:
+SELECT procedure_id, procedure_name, category, price, duration, insurance_covered 
+FROM athena_db.procedures
+WHERE insurance_covered = 'yes' OR insurance_covered = 'no';
