@@ -1,201 +1,273 @@
 
-# Setup Amazon Bedrock Agent for Text2SQL
+# Setup Amazon Bedrock Agent for Text2SQL with Athena and Streamlit
+
 
 ## Introduction
- We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL based datastores.
+This guide details the setup process for an Amazon Bedrock agent on AWS, which will include setting up S3 buckets, a knowledge base, an action group, and a Lambda function. We will use the Streamlit framework for the user interface. The agent is designed for dynamically creating an investment company portfolio based on specific parameters, and providing a Q&A capability to FOMC reports. This exercise will include a sending email method, but will not be fully configured.
 
 ## Prerequisites
 - An active AWS Account.
-- Familiarity with AWS services like Amazon Bedrock, S3, and Lambda.
-- Make sure that you have granted access to all Amazon models, and Anthropic Claude model from the Amazon Bedrock console.
+- Familiarity with AWS services like Amazon Bedrock, S3, Lambda, and Cloud9.
 
 ## Diagram
 
-![Diagram](images/bedrock-agent-webscrape-diagram.jpg)
+![Diagram](Streamlit_App/images/diagram.png)
 
 ## Configuration and Setup
 
-### Step 1: Creating S3 Bucket
+### Step 1: Creating S3 Buckets
+- Please make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
+- **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket "knowledgebase-bedrock-agent-alias". We will use the default settings. 
 
-- **Artifacts & Lambda layer Bucket**: Create an S3 bucket to store artifacts. For example, call it "artifacts-bedrock-agent-webscrape-alias". You will need to download, then add the API schema files to this S3 bucket. These .json files can be found [here](https://github.com/build-on-aws/bedrock-agents-webscraper/tree/main/schema). 
+![Bucket create 1](Streamlit_App/images/bucket_pic_1.png)
 
-   The provided schemas are an OpenAPI specification for the "Webscrape & Internet Search APIs," which outlines the structure required to call the respective functions via input and/or url. These API Schemas is a rich description of an action, so the agent knows when to use it, and exactly how to call it and use results. These schemas define primary endpoints, `/search` detailing how to interact with the API, the required parameter, and the expected responses. Once uploaded, please select and open the .json documents to review the content.
+![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
-   You will also need to download the .zip file for the lambda layer from [here](https://github.com/build-on-aws/bedrock-agents-webscraper/raw/main/lambda-layer/googlesearch_requests_libraries.zip). 
+- After creation, add the .pdf files located [here](https://github.com/build-on-aws/bedrock-agents-streamlit/tree/main/s3Docs) to the s3 bucket.
+(These files are the Federal Open Market Committee documents describing monetary policy decisions made at the Federal Reserved board meetings. The documents include discussion of economic conditions, policy directives to the Federal Reserve Bank of New York for open market operations, and votes on target ranges for the federal funds rate. More information can be found [here](https://www.federalreserve.gov/newsevents/pressreleases/monetary20231011a.htm). Once uploaded, please select one of the documents to open and review the content.
 
-![Bucket create 1](images/bucket_pic_1.png)
-
-
-![Bucket create 2](images/bucket_pic_2.png)
-
-
-![Loaded Artifact](images/loaded_artifact.png)
+![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-### Step 2: Lambda Function Configuration
-- Create a Lambda function (Python 3.12) for the Bedrock agent's action group. We will call this Lambda function "bedrock-agent-webscrape". 
+- **Artifacts Bucket**: Create another S3 bucket to store artifacts. For example, call it "artifacts-bedrock-agent-creator-alias". You will need to download, then add the API schema file to this S3 bucket. This .json file can be found [here](https://github.com/build-on-aws/bedrock-agents-streamlit/blob/main/ActionSchema.json). 
 
-![Create Function](images/create_function.png)
+The provided schema is an OpenAPI specification for the "PortfolioCreator API," which outlines the structure and capabilities of a service designed for company portfolio creation, company financial research, and sending an email. This API Schema is a rich description of each action, so agents know when to use it, and exactly how to call it and use results. This schmea defines three primary endpoints, `/companyResearch`, `/createPortfolio`, and `/sendEmail` detailing how to interact with the API, the required parameters, and the expected responses.) Once uploaded, please select and open the .json document to review the content.
 
-![Create Function2](images/create_function_2.png)
+![Loaded Artifact](Streamlit_App/images/loaded_artifact.png)
+ 
 
-- Copy the provided code from the ["lambda_webscrape.py"](https://github.com/build-on-aws/bedrock-agents-webscraper/blob/main/function/lambda_webscrape.py) file into your Lambda function. After, select the deploy button in the tab section in the Lambda console. 
+### Step 2: Knowledge Base Setup in Bedrock Agent
 
-   This code takes the url from the event passed in from the bedrock agent, then uses the requests library to call, then scrape the webpage. The scraped data is saved to the /tmp directory of the Lambda function, then passed into the response back to the agent.
+- Before we setup the knowledge base, we will need to grant access to the models that will be needed for our agent in Bedrock. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select “Model access”. On the right, select the orange “manage model access” button.
 
-   Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
+![Model access](Streamlit_App/images/model_access.png)
 
-![Lambda deploy](images/lambda_deploy.png)
+- Select the checkbox next to the “Models” column. This will auto select all of the models. After, scroll down to the bottom right and select “Request model access”. 
+
+![Request model access](Streamlit_App/images/request_model_access.png)
+
+![Request model access btn](Streamlit_App/images/request_model_access_btn.png)
+
+- After, verify that the Access status of the Models is green stating “Access granted”.
+
+![Access granted](Streamlit_App/images/access_granted.png)
+
+
+- Now, we will create a knowledge base by selecting “Knowledge base” on the left, then selecting the orange button “Create Knowledge base”.  
+
+![create_kb_btn](Streamlit_App/images/create_kb_btn.png)
+
+- You can use the default name, or enter in your own. Then, select "Next" at the bottom right of the screen.
+
+![KB details](Streamlit_App/images/kb_details.png)
+
+![KB details 2](Streamlit_App/images/kb_details_next.png)
+
+- Sync S3 bucket "knowledgebase-bedrock-agent-alias" to this knowledge base.
+
+![KB setup](Streamlit_App/images/KB_setup.png)
+
+- Select the default option OpenSearch Serverless as the vector store.
+ 
+![Vector Store Config](Streamlit_App/images/vector_store_config.png)
+
+- On the next screen, review your work, then select "Create Knowledge Base" 
+(Creating the knowledge base may take a few minutes. You can continue to the next step in the meantime.)
+
+![Review and Create KB](Streamlit_App/images/review_create_kb.png)
+
+
+
+### Step 3: Lambda Function Configuration
+- Create a Lambda function (Python 3.11) for the Bedrock agent's action group. We will call this Lambda function "PortfolioCreator-actions". 
+
+![Create Function](Streamlit_App/images/create_function.png)
+
+![Create Function2](Streamlit_App/images/create_function2.png)
+
+- Copy the provided code from the ["ActionLambda.py"](https://github.com/build-on-aws/bedrock-agents-streamlit/blob/main/ActionLambda.py) file into your Lambda function. After, select the deploy button in the tab section in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
+
+![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
 - Next, apply a resource policy to the Lambda to grant Bedrock agent access. To do this, we will switch the top tab from “code” to “configuration” and the side tab to “Permissions”. Then, scroll to the “Resource-based policy statements” section and click the “Add permissions” button.
 
-![Permissions config](images/permissions_config.png)
+![Permissions config](Streamlit_App/images/permissions_config.png)
 
-![Lambda resource policy create](images/lambda_resource_policy_create.png)
+![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in "arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID" for now. We will include the ARN once it’s generated in step 4 after creating the Bedrock agent)
+- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in "arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID" for now. We will include the ARN once it’s generated in step 6 after creating the Bedrock Agent alias):
 
-![Lambda resource policy](images/lambda_resource_policy.png)
-
-
-- Next, we will adjust the configuration on the Lambda so that it has enough time, and CPU to handle the request. Navigate back to the Lambda function screen, go to the Configurations tab, then General configuration and select Edit.
-
-![Lambda config 1](images/lambda_config_1.png)
-
-- Update Memory to 4048MB, Ephemeral storage to 1024MB, and Timeout to 1 minute. Leave the other settings as default, then select Save.
-
-![Lambda config 2](images/lambda_config_2.png)
-
-
-- You are now done setting up the webscrape Lambda function. Now, you will need to create another Lambda function following the exact same process for the internet-search, using the ["lambda_internet_search.py"](https://github.com/build-on-aws/bedrock-agents-webscraper/blob/main/function/lambda_internet_search.py) code. Name this Lambda function "bedrock-agent-internet-search"
-
-
-### Step 3: Create & attach Lambda layer
-
-- In order to create this Lambda layer, you will need a .zip file of the dependencies needed for the Lambda function that are not natively provided. In this case, we are using the requests and googlesearrch libraries for the internet searching and web scraping. I've already packaged the dependencies that you can download from [here](https://github.com/build-on-aws/bedrock-agents-webscraper/raw/main/lambda-layer/googlesearch_requests_libraries.zip).  
-
-- After, navigate to the AWS Lambda console, then select layers from the left-side panel, then create layer.
-  ![lambda layer 1](images/lambda_layer_1.png)
-
-- Name your lambda layer "googlesearch_requests_layer". Select "Upload a .zip file" and choose the .zip file of dependencies. Choose "x86_64" for your Compatible architectures, and Python 3.12 for your runtime (3.11 version is optional). Your choices should look similar to the example below. 
-![lambda layer 2](images/lambda_layer_2.png)
-
-- Navigate back to Lambda function "bedrock-agent-webscrape", with Code tab selected. Scroll to the Layers section and select "Add a Layer"
-
-![lambda layer 3](images/lambda_layer_3.png)
-
-![lambda layer 4](images/lambda_layer_4.png)
-
-- Choose the Custom layers option from the drop down, select the layer you created "googlesearch_requests_layer", and version 1. Then, select Add. Navigate back to your Lambda function, and verify that the layer has been added.
-
-![lambda layer 5](images/lambda_layer_5.png)
-
-- You are now done creating and adding the dependencies needed via Lambda layer for your webscrape function. Now, add this same layer to the Lambda function "bedrock-agent-internet-search", and verify that it has been added successfully.
+![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
 
 ### Step 4: Setup Bedrock Agent and Action Group 
 - Navigate to the Bedrock console, go to the toggle on the left, and under “Orchestration” select Agents, then select “Create Agent”.
 
-![Orchestration2](images/orchestration2.png)
+![Orchestration2](Streamlit_App/images/orchestration2.png)
 
-- On the next screen, provide an agent name, like WebscrapeAgent. Leave the other options as default, then select “Next”
+- On the next screen, provide an agent name, like “PortfolioCreator”. Leave the other options as default, then select “Next”
 
-![Agent details](images/agent_details.png)
+![Agent details](Streamlit_App/images/agent_details.png)
 
-![Agent details 2](images/agent_details_2.png)
+![Agent details 2](Streamlit_App/images/agent_details_2.png)
 
-- Select the Anthropic: Claude V2.1 model. Now, we need to add instructions by creating a prompt that defines the rules of operation for the agent. In the prompt below, we provide specific instructions for the agent on how to answer questions. Copy, then paste the details below into the agent instructions. 
+- Select the Anthropic: Claude V1.2 model. Now, we need to add instructions by creating a prompt that defines the rules of operation for the agent. In the prompt below, we provide specific direction on how the model should use tools to answer questions. Copy, then paste the details below into the agent instructions. 
 
-   "Your a business analyst that creates Athena SQL queries. You use the schema tables from the knowledge base to query the Athena service. Return the <sql-query> if you create one. Be friendly in every response." 
+"You are an investment banker who creates portfolios of companies based on the number of companies, and industry in the <user-request>. You also research companies, and summarize documents. You send emails that include the last company portfolio created and FOMC summary searched. Format the email like normal. Formulate a solution to a given <user-request> based on the instructions and tools provided."
 
-Then, select Next.
+![Model select2](Streamlit_App/images/select_model.png)
 
-![Model select2](images/select_model.png)
+- When creating the agent, select Lambda function "PortfolioCreator-actions". Next, select the schema file ActionSchema.json from the s3 bucket "artifacts-bedrock-agent-creator-alias". Then, select "Next" 
 
-- Provide an action group name like "webscrape". Select the Lambda function "bedrock-agent-webscrape". For the S3 Url, select the schema webscrape-schema.json file in the S3 bucket "artifacts-bedrock-agent-webscrape-alias".
-
-![Add action group](images/action_group_add.png)
-
-- After, select Next, then Next again as we are not adding a knowledge base. On the last screen, select Create Agent.
-
-- You are now done setting up the webscrape action group. You will need to create another action group following the exact same process for the internet-search, using the schema [internet-search-schema.json](https://github.com/build-on-aws/bedrock-agents-webscraper/blob/main/schema/internet-search-schema.json) file.
+![Add action group](Streamlit_App/images/action_group_add.png)
 
 
-### Step 5: Modify Bedrock Agent Advance Prompts
-- Once your agent is created, we need to modify the advance prompts in the Bedrock agent for pre-processing so that the agent will allow us to use webscraping and internet searching. Navigate back to the Agent overview screen for your WebscrapeAgent, like below. 
+### Step 5: Setup Knowledge Base with Bedrock Agent
 
-![bedrock agent screen 1](images/bedrock_agent_screen_1.png)
+- When integrating the KB with the agent, you will need to provide basic instructions on how to handle the knowledge base. For example, use the following: “Use this knowledge base when a user asks about data, such as economic trends, company financial statements, or the outcomes of the Federal Open Market Committee meetings.”
+ 
+![Knowledge base add2](Streamlit_App/images/add_knowledge_base2.png)
 
-- Scroll down, then select Working draft. Under Advanced prompts, select Edit.
+Review, then select the “Create Agent” button.
 
-![bedrock agent screen 2](images/bedrock_agent_screen_2.png)
-
-- Change the tab from `Pre-processing` to `Orchestration`. Toggle on the `Override orchestration template defaults` and `Activate orchestration template` button. 
-
-![bedrock agent screen 3](images/bedrock_agent_screen_3.png)
-
-- Under *prompt template editor*, you will notice that you now have access to control the pre-built prompts. Underneath the `<auxiliary_instructions>` tag, copy the following:
-
-   `Remember to use the knowledge base for the table schemas needed to create SQL queries for Amazon Athena service. Be sure to use all lowercase when creating the <sql-query>. If you dont know something or not sure, dont make anything up and reply with "I'm not sure". Here is an example of what a SQL query should look like:`
-   <sql-query>
-   `select * from athena_db.procedures_tb where Insurance_Covered = 'yes';`
-   </sql-query>
-
-   After, scroll down and select Save & Exit.
-
-![bedrock agent screen 4](images/bedrock_agent_screen_4.png)
+![create_agent_button](Streamlit_App/images/create_agent_button.png)
 
 
-## Step 5: Testing the Setup
+### Step 6: Create an alias
+-Create an alias (new version), and choose a name of your liking. Make sure to copy and save your Agent ID and Agent Alias ID. You will need these in step 9.
+ 
+![Create alias](Streamlit_App/images/create_alias.png)
+
+- Next, navigate to the "Agent Overview" settings for the agent created by selecting "Agents" under the Orchestration dropdown menu on the left of the screen, then select the agent. Copy the Agent ARN, then add this ARN to the resource policy of Lambda function “PortfolioCreator-actions” previously created in step 3. 
+
+![Agent ARN2](Streamlit_App/images/agent_arn2.png)
+
+
+## Step 7: Testing the Setup
+### Testing the Knowledge Base
+- While in the Bedrock console, select “Knowledge base” under the Orchestration tab, then the KB you created. Scroll down to the Data source section, and make sure to select the “Sync” button.
+
+![KB sync](Streamlit_App/images/kb_sync.png)
+
+- You will see a user interface on the right where you will need to select a model. Choose the Anthropic Claude V1.2 model, then select “Apply”.
+
+![Select model test](Streamlit_App/images/select_model_test.png)
+
+- You should now have the ability to enter prompts in the user interface provided.
+
+![KB prompt](Streamlit_App/images/kb_prompt.png)
+
+- Test Prompts:
+  1. "Give me a summary of financial market developments and open market operations in January 2023."
+  2. "Can you provide information about inflation or rising prices?"
+  3. "What can you tell me about the Staff Review of the Economic & Financial Situation?"
 
 ### Testing the Bedrock Agent
-- While in the Bedrock console, select “Agents” under the Orchestration tab, following the agent you created. You should be able to enter prompts in the user interface provided to test your action groups from the Bedrock agent.
+- While in the Bedrock console, select “Agents” under the Orchestration tab, then the agent you created. You should be able to enter prompts in the user interface provided to test your knowledge base and action groups from the agent.
 
-![Agent test](images/agent_test.png)
+![Agent test](Streamlit_App/images/agent_test.png)
 
-- Example prompts for webscrape action group:
-   1. Webscrape this url and tell me the main features of pikachu "https://www.pokemon.com/us/pokedex/pikachu"
-   2. Webscrape this url and tell me the main villians that Goku had to fight on planet earth "https://en.wikipedia.org/wiki/Goku"
-   3. Webscrape this url and tell me what you know about Romeo "https://www.gutenberg.org/cache/epub/1777/pg1777-images.html"
+- Example prompts fot Knowledge Base:
+   1. "Give me a summary of financial market developments and open market operations in January 2023"
+   2. "Tell me the participants view on economic conditions and economic outlook"
+   3. "Provide any important information I should know about inflation, or rising prices"
+   4. "Tell me about the Staff Review of the Economic & financial Situation"
 
+- Example prompts for Action Groups:
+   1. "Create a portfolio with 3 companies in the real estate industry"
+   2. "Create portfolio of 3 companies that are in the technology industry"
+   3. "Provide more details on these companies"
+   4. "Create a new investment portfolio of companies"
+   5. "Do company research on TechStashNova Inc."
 
-![Agent test 2](images/agent_test_2.png)
-
-
-- Example prompts for internet search action group:
-   1. Do an internet search and tell me the top 3 best traits about lebron james
-   2. Do an internet search and tell me how do I know what foods are healthy for me
-   3. Do an internet search and tell me the top 3 strongest features of charizard from pokemon
-
-![Agent test 3](images/agent_test_3.png)
-
-   (After executing the internet-search function, you can navigate to the CloudWatch logs for this Lambda, and observe the URLs that the data was scraped from, along with other details. You will notice that all URLs will not allow scraping, so the code is designed to error those attempts, and continue with the operation.)
-
-![Lambda logs](images/lambda_logs.png)
+- Example prompt for KB & AG
+    1. "Send an email to test@example.com that includes the company portfolio and FOMC summary" 
+    `(The logic for this method is not implemented to send emails)`  
 
 
-- **PLEASE NOTE:** when using the webscraper and internet-search     functionality, you could experience some level of hallucincation, innacuracies, or error if you attempt to ask about information that is very recent, if the prompt is too vague, or if the endpoint cannot be accessed or has a redirect. 
+## Step 8: Setting Up Cloud9 Environment (IDE)
 
-   There is also minimal control over which urls are selected during the internet search, except for the # of urls selected from within the google search function parameters. In order to help control this behavior, more engineering will need to be involved. 
+1.	Navigate in the Cloud9 management console. Then, select “Create Environment”
+
+![create_environment](Streamlit_App/images/create_environment.png)
+
+2. Here, you will enter the following values in each field
+   - Name: Bedrock-Environment (Enter any name)
+   - Instance type: t3.small
+   - Platform: Ubuntu Server 22.04 LTS
+   - Timeout: 1 hour  
+
+![ce2](Streamlit_App/images/ce2.png)
+
+   - Once complete, select the "Create" button at the bottom of the screen. The environment will take a couple of minutes to spin up. If you get an error spinning up Cloud9 due to lack of resources, you can also choose t2.micro for the instance type and try again. (The Cloud9 environment has Python 3.10.12 version at the time of this publication)
+
+
+![ce3](Streamlit_App/images/ce3.png)
+
+3. Navigate back to the Cloud9 Environment, then select "open" next to the Cloud9 you just created. Now, you are ready to setup the Streamlit app!
+
+![environment](Streamlit_App/images/environment.png)
+
+
+## Step 9: Setting Up and Running the Streamlit App
+1. **Obtain the Streamlit App ZIP File**: Download the zip file of the project [here](https://github.com/build-on-aws/bedrock-agents-streamlit/archive/refs/heads/main.zip).
+
+2. **Upload to Cloud9**:
+   - In your Cloud9 environment, upload the ZIP file.
+
+![Upload file to Cloud9](Streamlit_App/images/upload_file_cloud9.png)
+
+3. **Unzip the File**:
+   - Use the command `unzip bedrock-agents-streamlit-main.zip` to extract the contents.
+4. **Navigate to Streamlit_App Folder**:
+   - Change to the directory containing the Streamlit app. Use the command `cd ~/environment/bedrock-agents-streamlit-main/Streamlit_App`
+5. **Update Configuration**:
+   - Open the `InvokeAgent.py` file.
+   - Update the `agentId` and `agentAliasId` variables with the appropriate values, then save it.
+
+![Update Agent ID and alias](Streamlit_App/images/update_agentId_and_alias.png)
+
+6. **Install Streamlit** (if not already installed):
+   - Run `pip install streamlit`. Additionally, make sure boto3, and pandas dependencies are installed by running `pip install boto3` and `pip install pandas`.
+
+7. **Run the Streamlit App**:
+   - Execute the command `streamlit run app.py --server.address=0.0.0.0 --server.port=8080`.
+   - Streamlit will start the app, and you can view it by selecting "Preview" within the Cloud9 IDE at the top, then "Preview Running Application"
+   - Once the app is running, please test some of the sample prompts provided. (On 1st try, if you receive an error, try again.)
+
+![Running App ](Streamlit_App/images/running_app.png)
+
+Optionally, you can review the trace events in the left toggle of the screen. This data will include the rational tracing, invocation input tracing, and observation tracing.
+
+![Trace events ](Streamlit_App/images/trace_events.png)
 
 
 ## Cleanup
-After completing the setup and testing of the Bedrock agent, follow these steps to clean up your AWS environment and avoid unnecessary charges:
 
+After completing the setup and testing of the Bedrock Agent and Streamlit app, follow these steps to clean up your AWS environment and avoid unnecessary charges:
 1. Delete S3 Buckets:
 - Navigate to the S3 console.
-- Select the buckets "artifacts-bedrock-agent-webscrape-alias". Make sure that this bucket is empty by deleting the files. 
+- Select the buckets "knowledgebase-bedrock-agent-alias" and "artifacts-bedrock-agent-creator-alias". Make sure that both of these buckets are empty by deleting the files. 
 - Choose 'Delete' and confirm by entering the bucket name.
 
-2.	Remove the Lambda Functions and Layers:
+2.	Remove Lambda Function:
 - Go to the Lambda console.
-- Select the "bedrock-agent-internet-search" function.
-- Click 'Delete' and confirm the action. Do the same for the webscraper function
-- Be sure to navigate to the layers tab in the Lambda console, and delete "googlesearch_requests_layer"
+- Select the "PortfolioCreator-actions" function.
+- Click 'Delete' and confirm the action.
 
 3.	Delete Bedrock Agent:
 - In the Bedrock console, navigate to 'Agents'.
 - Select the created agent, then choose 'Delete'.
+
+4.	Deregister Knowledge Base in Bedrock:
+- Access the Bedrock console, then navigate to “Knowledge base” under the Orchestration tab.
+- Select, then delete the created knowledge base.
+
+5.	Clean Up Cloud9 Environment:
+- Navigate to the Cloud9 management console.
+- Select the Cloud9 environment you created, then delete.
+
+
 
 
 ## Security
@@ -205,4 +277,6 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
+
+
 
