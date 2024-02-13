@@ -1,0 +1,74 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "AthenaQuery API",
+    "description": "API for querying data from an Athena database",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/athenaQuery": {
+      "post": {
+        "description": "Execute a query on an Athena database",
+        "requestBody": {
+          "description": "Athena query details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Procedure ID": {
+                    "type": "string",
+                    "description": "Unique identifier for the procedure",
+                    "nullable": true
+                  },
+                  "Query": {
+                    "type": "string",
+                    "description": "SQL Query"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ResultSet": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "A single row of query results"
+                      },
+                      "description": "Results returned by the query"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
