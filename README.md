@@ -37,8 +37,8 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
-- After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) to the s3 bucket.
-These 2 files contain mock data of customer and procedure information. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
+- After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) and the API schema for the Lambda [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) to the s3 bucket.
+These files contain mock data of customer and procedure information, and the schema that your Lambda needs for the Bedrock agent to communicate with it. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
 
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
@@ -122,7 +122,7 @@ WHERE balance >= 0;`
 
 - If tests were succesful, we can move to the next step.
 
-### Step 3: Lambda Function Configuration
+### Step 4: Lambda Function Configuration
 - Create a Lambda function (Python 3.12) for the Bedrock agent's action group. We will call this Lambda function "bedrock-agent-txtsql-action". 
 
 ![Create Function](Streamlit_App/images/create_function.png)
@@ -144,7 +144,7 @@ WHERE balance >= 0;`
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
 
-### Step 4: Setup Bedrock Agent and Action Group 
+### Step 5: Setup Bedrock Agent and Action Group 
 - Navigate to the Bedrock console, go to the toggle on the left, and under “Orchestration” select Agents, then select “Create Agent”.
 
 ![Orchestration2](Streamlit_App/images/orchestration2.png)
@@ -161,14 +161,75 @@ WHERE balance >= 0;`
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
-- When creating the agent, select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the s3 bucket "athena-datasource-alias". Then, select "Next" 
+- When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the s3 bucket "athena-datasource-alias". Select Next, then Next again, as we are not associating a knowledge base. 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
 
+Create the Agent
+
+![Create agent](Streamlit_App/images/create_agent.png)
+
+
+- Now, we will need to provide our Bedrock agent the schemas for our Athena tables in order to build the SQL queries. On the Agent Overview screen, scroll down and select Working draft
+
+![Working draft](Streamlit_App/images/working_draft.png)
+
+- Go down to Advanced prompts and select edit
+
+![advanced prompt btn](Streamlit_App/images/advance_prompt_btn.png)
+
+- Select the `Orchestration` tab. Toggle on the radio button `Override orchestration template defaults`. Make sure `Activate orchestration template` is enabled as well.
+
+- In the `Prompt template editor`, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas within the prompt:
+
+```sql
+<athena_schema>
+CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
+  `Cust_Id` integer,
+  `Customer_Name` string,
+  `Balance` integer,
+  `Past_Due` integer,
+  `Vip` string
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION 's3://genai-sourcedata-jo4/';  
+</athena_schema>
+
+<athena_schema>
+CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
+  `Procedure_ID` string,
+  `Procedure_Name` string,
+  `Category` string,
+  `Price` integer,
+  `Duration` integer,
+  `Insurance_Covered` string,
+  `Customer_Id` integer
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION 's3://genai-sourcedata-jo4/';  
+</athena_schema>
+```
+
+
+It should look similar to the following:
+
+![Orchestration edit](Streamlit_App/images/orch_edit.png)
+
+
+- Scroll down to the bottome, then select "Save and exit"
+
+![Save N exit](Streamlit_App/images/saveNexit.png)
+
 
 ### Step 6: Create an alias
--Create an alias (new version), and choose a name of your liking. Make sure to copy and save your Agent ID and Agent Alias ID. You will need these in step 8.
+- Create an alias (new version), and choose a name of your liking. Make sure to copy and save your Agent ID and Agent Alias ID. You will need these in step 9.
  
 ![Create alias](Streamlit_App/images/create_alias.png)
 
