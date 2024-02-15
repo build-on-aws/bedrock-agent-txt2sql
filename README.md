@@ -38,7 +38,7 @@ This guide details the setup process for an Amazon Bedrock agent on AWS, which w
 
 ### Step 2: Creating S3 Buckets
 - Please make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
-- **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket "athena-datasource-alias". We will use the default settings. 
+- **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-alias`. We will use the default settings. 
 
 ![Bucket create 1](Streamlit_App/images/bucket_pic_1.png)
 
@@ -57,7 +57,7 @@ These 2 files contain mock data of customer and procedure information. We will u
 
 ### Step 3: Setup  Amazon Athena
 
-- Search for the Athena service, then navigate to the Athena UI. Validate that the "Query your data with Trino SQL" radiobutton is selected, then press "Launch query editor".
+- Search for the Amazon Athena service, then navigate to the Athena management console. Validate that the "Query your data with Trino SQL" radio button is selected, then press "Launch query editor".
 
 ![Athena query button](Streamlit_App/images/athena_query_edit_btn.png)
 
@@ -69,11 +69,11 @@ in the empty query screen. After, select Run:
 
 ![Create DB query](Streamlit_App/images/create_athena_db.png)
 
-- You should now see query successfull at the bottom. If so, change the default that is select for your database to "athena_db" as shown in the screenshot above.
+- You should now see query successful at the bottom. On the left side under "Data", change the default database to your database "athena_db" as shown in the screenshot above.
 
-- Lets create the customers table. Run the following query in Athena:
+- Now, let's create the `customers` table. Run the following query in Athena:
 
-```sql
+`
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
   `Cust_Id` integer,
   `Customer_Name` string,
@@ -85,13 +85,12 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';
-```
+LOCATION 's3://athena-datasource-alias/';
+`
 
+Open another query tab and create the `procedures` table by running this next query:
 
-Open another query tab and create the procedures table by running this next query:
-
-```sql
+`
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
   `Procedure_ID` string,
   `Procedure_Name` string,
@@ -105,8 +104,8 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';
-```
+LOCATION 's3://athena-datasource-alias/';
+`
 
 Your tables for Athena within editor should look similar to the following:
 
@@ -119,6 +118,7 @@ FROM athena_db.procedures
 WHERE insurance_covered = 'yes' OR insurance_covered = 'no';`
 
 ![procedures query](Streamlit_App/images/procedure_query.png)
+
 
 `SELECT * 
 FROM athena_db.customers
@@ -136,7 +136,7 @@ WHERE balance >= 0;`
 
 ![Create Function2](Streamlit_App/images/create_function2.png)
 
-- Copy the provided code from the ["ActionLambda.py"](https://github.com/build-on-aws/bedrock-agents-streamlit/blob/main/ActionLambda.py) file into your Lambda function. After, select the deploy button in the tab section in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
+- Copy the provided code from the ["lambda_function.py"](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button in the tab section in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
