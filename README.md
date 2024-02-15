@@ -122,6 +122,7 @@ WHERE balance >= 0;`
 
 - If tests were succesful, we can move to the next step.
 
+
 ### Step 4: Lambda Function Configuration
 - Create a Lambda function (Python 3.12) for the Bedrock agent's action group. We will call this Lambda function "bedrock-agent-txtsql-action". 
 
@@ -223,10 +224,9 @@ It should look similar to the following:
 ![Orchestration edit](Streamlit_App/images/orch_edit.png)
 
 
-- Scroll down to the bottome, then select "Save and exit"
+- Scroll to the bottom, then select "Save and exit"
 
 ![Save N exit](Streamlit_App/images/saveNexit.png)
-
 
 ### Step 6: Create an alias
 - Create an alias (new version), and choose a name of your liking. Make sure to copy and save your Agent ID and Agent Alias ID. You will need these in step 9.
