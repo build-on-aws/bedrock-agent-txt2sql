@@ -62,7 +62,7 @@ in the empty query screen. After, select Run:
 
 - You should now see query successful at the bottom. On the left side under "Data", change the default database to your database `athena_db` as shown in the screenshot above.
 
-- Now, let's create the `customers` table. Run the following query in Athena (remember to update the {alias} field.):
+- Now, let's create the `customers` table. Run the following query in Athena `(Remember to update the {alias} field.)`:
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
@@ -80,7 +80,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
-Open another query tab and create the `procedures` table by running this query:
+Open another query tab and create the `procedures` table by running this query `(Remember to update the {alias} field.)`:
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
