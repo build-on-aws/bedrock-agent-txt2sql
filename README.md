@@ -1,11 +1,8 @@
 
 # Setup Amazon Bedrock Agent for Text2SQL with Streamlit
 
-
-# Setup Agent with Amazon Bedrock and Streamlit
-
 ## Introduction
-This guide details the setup process for an Amazon Bedrock agent on AWS, which will include setting up S3 buckets, a knowledge base, an action group, and a Lambda function. We will use the Streamlit framework for the user interface. The agent is designed for dynamically creating an investment company portfolio based on specific parameters, and providing a Q&A capability to FOMC reports. This exercise will include a sending email method, but will not be fully configured.
+We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL based datastores.
 
 ## Prerequisites
 - An active AWS Account.
@@ -25,11 +22,7 @@ This guide details the setup process for an Amazon Bedrock agent on AWS, which w
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox next to "Anthropic", and "Amazon" if not by default already. After, scroll down to the bottom right and select “Request model access”. 
-
-![Request model access](Streamlit_App/images/request_model_access.png)
-
-![Request model access btn](Streamlit_App/images/request_model_access_btn.png)
+- Select the checkbox next to "Anthropic", and "Amazon" if not by default already. After, scroll down to the bottom right and save the changes. 
 
 - After, verify that the Access status of the Models is green stating “Access granted”.
 
@@ -38,7 +31,7 @@ This guide details the setup process for an Amazon Bedrock agent on AWS, which w
 
 ### Step 2: Creating S3 Buckets
 - Please make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
-- **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-alias`. We will use the default settings. 
+- **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
 
 ![Bucket create 1](Streamlit_App/images/bucket_pic_1.png)
 
@@ -50,9 +43,7 @@ These 2 files contain mock data of customer and procedure information. We will u
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service ina  later step.
-
-![Loaded Artifact](Streamlit_App/images/loaded_artifact.png)
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service in a later step.
  
 
 ### Step 3: Setup  Amazon Athena
@@ -73,39 +64,41 @@ in the empty query screen. After, select Run:
 
 - Now, let's create the `customers` table. Run the following query in Athena:
 
-`
+```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
-  `Cust_Id` integer,
-  `Customer_Name` string,
-  `Balance` integer,
-  `Past_Due` integer,
-  `Vip` string
+  Cust_Id integer,
+  Customer_Name string,
+  Balance integer,
+  Past_Due integer,
+  Vip string
 )
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-alias/';
-`
+LOCATION 's3://genai-sourcedata-jo4/';
+```
+
 
 Open another query tab and create the `procedures` table by running this next query:
 
-`
+```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
-  `Procedure_ID` string,
-  `Procedure_Name` string,
-  `Category` string,
-  `Price` integer,
-  `Duration` integer,
-  `Insurance_Covered` string,
-  `Customer_Id` integer
+  "Procedure_ID" string,
+  "Procedure_Name" string,
+  "Category" string,
+  "Price" integer,
+  "Duration" integer,
+  "Insurance_Covered" string,
+  "Customer_Id" integer
 )
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-alias/';
-`
+LOCATION 's3://genai-sourcedata-jo4/';
+```
+
 
 Your tables for Athena within editor should look similar to the following:
 
