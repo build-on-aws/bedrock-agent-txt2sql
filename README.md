@@ -60,9 +60,9 @@ in the empty query screen. After, select Run:
 
 ![Create DB query](Streamlit_App/images/create_athena_db.png)
 
-- You should now see query successful at the bottom. On the left side under "Data", change the default database to your database "athena_db" as shown in the screenshot above.
+- You should now see query successful at the bottom. On the left side under "Data", change the default database to your database `athena_db` as shown in the screenshot above.
 
-- Now, let's create the `customers` table. Run the following query in Athena:
+- Now, let's create the `customers` table. Run the following query in Athena (remember to update the {alias} field.):
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
@@ -76,11 +76,11 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';
+LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
-Open another query tab and create the `procedures` table by running this next query:
+Open another query tab and create the `procedures` table by running this query:
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
@@ -96,7 +96,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';
+LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
@@ -104,7 +104,7 @@ Your tables for Athena within editor should look similar to the following:
 
 ![Athena editor env created](Streamlit_App/images/env_created.png)
 
-- Now, lets quickly test to queries against the customers and procedures table by running the following two example queries below:
+- Now, lets quickly test the queries against the customers and procedures table by running the following two example queries below:
 
 `SELECT *
 FROM athena_db.procedures
