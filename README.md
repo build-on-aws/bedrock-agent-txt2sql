@@ -75,11 +75,13 @@ in the empty query screen. After, select Run:
 
 `
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
-  `Cust_Id` integer,
-  `Customer_Name` string,
-  `Balance` integer,
-  `Past_Due` integer,
-  `Vip` string
+  ``Procedure_ID`` string,
+  ``Procedure_Name`` string,
+  ``Category`` string,
+  ``Price`` integer,
+  ``Duration`` integer,
+  ``Insurance_Covered`` string,
+  ``Customer_Id`` integer
 )
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
