@@ -129,7 +129,7 @@ WHERE balance >= 0;`
 
 ![Create Function2](Streamlit_App/images/create_function2.png)
 
-- Copy the provided code from the ["lambda_function.py"](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button in the tab section in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
+- Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button under "Code source" in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
