@@ -74,6 +74,24 @@ in the empty query screen. After, select Run:
 - Lets create the customers table. Run the following query in Athena:
 
 ```sql
+CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
+  `Cust_Id` integer,
+  `Customer_Name` string,
+  `Balance` integer,
+  `Past_Due` integer,
+  `Vip` string
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION 's3://genai-sourcedata-jo4/';
+```
+
+
+Open another query tab and create the procedures table by running this next query:
+
+```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
   `Procedure_ID` string,
   `Procedure_Name` string,
@@ -89,26 +107,6 @@ LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
 LOCATION 's3://genai-sourcedata-jo4/';
 ```
-
-
-Open another query tab and create the procedures table by running this next query:
-
-`
-CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
-  `Procedure_ID` string,
-  `Procedure_Name` string,
-  `Category` string,
-  `Price` integer,
-  `Duration` integer,
-  `Insurance_Covered` string,
-  `Customer_Id` integer
-)
-ROW FORMAT DELIMITED 
-FIELDS TERMINATED BY ',' 
-LINES TERMINATED BY '\n'
-STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';
-`
 
 Your tables for Athena within editor should look similar to the following:
 
