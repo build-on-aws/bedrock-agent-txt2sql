@@ -54,7 +54,7 @@ These files contain mock data of customer and procedure information, and the sch
 
 ![Athena query button](Streamlit_App/images/athena_query_edit_btn.png)
 
-- Next, we will need to create an Athena database. While on the Editor tab, copy/paste the following query 
+- Next, we will create an Athena database. While on the Editor tab, copy/paste the following query 
 
 in the empty query screen. After, select Run:
 
@@ -64,7 +64,7 @@ in the empty query screen. After, select Run:
 
 - You should now see query successful at the bottom. On the left side under "Data", change the default database to your database `athena_db` as shown in the screenshot above.
 
-- Now, let's create the `customers` table. Run the following query in Athena `(Remember to update the {alias} field.)`:
+- Now, let's create the `customers` table. Run the following query in Athena. `(Remember to update the {alias} field)`:
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
@@ -82,7 +82,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
-Open another query tab and create the `procedures` table by running this query `(Remember to update the {alias} field.)`:
+Open another query tab and create the `procedures` table by running this query. `(Remember to update the {alias} field)`:
 
 ```sql
 CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
@@ -133,7 +133,7 @@ WHERE balance >= 0;`
 
 ![Create Function2](Streamlit_App/images/create_function2.png)
 
-- Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button under "Code source" in the Lambda console. Review the code provided before moving to the next step. (Make sure that the IAM role associated with the Bedrock agent can invoke the Lambda function)
+- Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button under "Code source" in the Lambda console. Review the code provided before moving to the next step.
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
