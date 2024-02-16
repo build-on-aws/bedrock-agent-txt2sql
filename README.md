@@ -283,7 +283,7 @@ It should look similar to the following:
 
 - Example prompts for Action Groups:
 
-    1. Return all procedures in the imaging category and are insured. Include all the details
+    1. Return all procedures in the imaging category and are insured. Include all the details and athena query generated
 
     2. Fetch me how many procedures are in the laboratory category, along with the Athena query created
 
