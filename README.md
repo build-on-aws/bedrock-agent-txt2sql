@@ -67,7 +67,7 @@ in the empty query screen. After, select Run:
 - Now, let's create the `customers` table. Run the following query in Athena. `(Remember to update the {alias} field)`:
 
 ```sql
-CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
+CREATE EXTERNAL TABLE athena_db.customers (
   Cust_Id integer,
   Customer_Name string,
   Balance integer,
@@ -85,7 +85,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 Open another query tab and create the `procedures` table by running this query. `(Remember to update the {alias} field)`:
 
 ```sql
-CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
+CREATE EXTERNAL TABLE athena_db.procedures (
   "Procedure_ID" string,
   "Procedure_Name" string,
   "Category" string,
