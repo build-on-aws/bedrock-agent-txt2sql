@@ -59,7 +59,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Athena manage button](Streamlit_App/images/athena_manage_btn.png)
 
-- Add the S3 prefix for the location for the query results:
+- Add the S3 prefix below for the query results location, then select the Save button:
 
 `s3://athena-destination-store-{alias}`
 
