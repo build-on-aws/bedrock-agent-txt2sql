@@ -96,7 +96,7 @@ Open another query tab and create the `procedures` table by running this query. 
 ```sql
 CREATE EXTERNAL TABLE athena_db.procedures (
   "Procedure_ID" string,
-  "Procedure_Name" string,
+  "Procedure" string,
   "Category" string,
   "Price" integer,
   "Duration" integer,
