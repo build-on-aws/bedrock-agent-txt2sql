@@ -276,7 +276,7 @@ It should look similar to the following:
 ## Step 7: Testing the Setup
 
 ### Testing the Bedrock Agent
-- While in the Bedrock console, select “Agents” under the Orchestration tab, then the agent you created. You should be able to enter prompts in the user interface provided to test your knowledge base and action groups from the agent.
+- While in the Bedrock console, select “Agents” under the Orchestration tab, then the agent you created. You should be able to enter prompts in the user interface provided to test your action groups from the agent.
 
 ![Agent test](Streamlit_App/images/agent_test.png)
 
@@ -285,15 +285,8 @@ It should look similar to the following:
 
     1. Return all procedures in the imaging category and are insured. Include all the details and athena query generated
 
-    2. Fetch me how many procedures are in the laboratory category, along with the Athena query created
+    2. Get medetails on all of the customers who are vip, and have a blance under 500 dollars
 
-    3. Return me the number of procedures that are either in the laboratory, imaging or surgery category, and that are insured
-
-    4. Return me information on all customers who have a past due balance of over 70 dollars
-
-    5. Get me all of the customers who are vip, and have a blance under 500 dollars
-
-    6. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created `(This query may return duplicates because it is creating a join query for Athena, and this service does not have integrity constraints)`
 
 
 ## Step 8: Setting Up Cloud9 Environment (IDE)
