@@ -184,7 +184,7 @@ WHERE balance >= 0;`
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
-- When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the s3 bucket "athena-datasource-alias". Select Next, then Next again, as we are not associating a knowledge base. 
+- When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the S3 bucket "athena-datasource-alias". Select Next, then Next again, as we are not associating a knowledge base. 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
