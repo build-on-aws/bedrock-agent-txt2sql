@@ -39,12 +39,13 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
 - After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) and the API schema for the Lambda [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) to the s3 bucket.
-These files contain mock data of customer and procedure information, and the schema that your Lambda needs for the Bedrock agent to communicate with it. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
+
+- These files contain mock data of customer and procedure information, and the schema that your Lambda needs for the Bedrock agent to communicate with it. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
 
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service in the next step.
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. Make sure to update the alias. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step.
  
 
 
@@ -54,9 +55,18 @@ These files contain mock data of customer and procedure information, and the sch
 
 ![Athena query button](Streamlit_App/images/athena_query_edit_btn.png)
 
-- Next, we will create an Athena database. While on the Editor tab, copy/paste the following query 
+- Before you run your first query in Athena, you need to set up a query result location with Amazon S3. Select the Settings tab, then the manage button in the "Query result location and ecryption" section. 
 
-in the empty query screen. After, select Run:
+![Athena manage button](Streamlit_App/images/athena_manage_btn.png)
+
+- Add the S3 prefix for the location for the query results:
+
+`s3://athena-destination-store-{alias}`
+
+![choose athena bucket.png](Streamlit_App/images/choose_bucket.png)
+
+
+- Next, we will create an Athena database. Select the Editor tab, then copy/paste the following query in the empty query screen. After, select Run:
 
 `CREATE DATABASE IF NOT EXISTS athena_db;`
 
