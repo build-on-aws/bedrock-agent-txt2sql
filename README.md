@@ -147,7 +147,7 @@ WHERE balance >= 0;`
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
-- We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` secion, select the Role name:
+- We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
