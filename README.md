@@ -38,15 +38,16 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
-- After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) and the API schema for the Lambda [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) to the s3 bucket.
+- After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data).
 
-- These files contain mock data of customer and procedure information, and the schema that your Lambda needs for the Bedrock agent to communicate with it. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
+- This file contains mock data of customer and procedure information. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
 
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. Make sure to update the alias. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step.
- 
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. Make sure to update the alias. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step. 
+
+- We will add the API schema for the Lambda function in order for it to communicate with the Bedrock agent. Download this [schema file](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) and upload to an S3 bucket. To refrain from creating additional S3 buckets, we will use `athena-destination-store-{alias}` for now. 
 
 
 ### Step 3: Setup  Amazon Athena
@@ -201,7 +202,7 @@ WHERE balance >= 0;`
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
-- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Next, select the schema file athena-schema.json from the S3 bucket `athena-datasource-alias`. 
+- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Next, select the schema file `athena-schema.json` from the S3 bucket `athena-destination-store-{alias}`. 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
