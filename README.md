@@ -214,7 +214,7 @@ WHERE balance >= 0;`
 <athena_schema>
 TABLE athena_db.customers (
   `Cust_Id` integer,
-  `Customer_Name` string,
+  `Customer` string,
   `Balance` integer,
   `Past_Due` integer,
   `Vip` string
@@ -229,7 +229,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 <athena_schema>
 TABLE athena_db.procedures (
   `Procedure_ID` string,
-  `Procedure_Name` string,
+  `Procedure` string,
   `Category` string,
   `Price` integer,
   `Duration` integer,
