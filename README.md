@@ -222,7 +222,7 @@ WHERE balance >= 0;`
 
 ```sql
 <athena_schema>
-TABLE athena_db.customers (
+CREATE EXTERNAL TABLE athena_db.customers (
   `Cust_Id` integer,
   `Customer` string,
   `Balance` integer,
@@ -237,7 +237,7 @@ LOCATION 's3://athena-destination-store-{alias}/';
 </athena_schema>
 
 <athena_schema>
-TABLE athena_db.procedures (
+CREATE EXTERNAL TABLE athena_db.procedures (
   `Procedure_ID` string,
   `Procedure` string,
   `Category` string,
