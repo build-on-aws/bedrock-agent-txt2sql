@@ -1,5 +1,5 @@
 
-# Setup Amazon Bedrock Agent for Text2SQL with Streamlit
+# Setup Amazon Bedrock Agent for Text2SQL Using Amazon Athena with Streamlit
 
 ## Introduction
 We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL datastores.
@@ -354,7 +354,7 @@ Optionally, you can review the trace events in the left toggle of the screen. Th
 After completing the setup and testing of the Bedrock Agent and Streamlit app, follow these steps to clean up your AWS environment and avoid unnecessary charges:
 1. Delete S3 Buckets:
 - Navigate to the S3 console.
-- Select the buckets "knowledgebase-bedrock-agent-alias" and "artifacts-bedrock-agent-creator-alias". Make sure that both of these buckets are empty by deleting the files. 
+- Select the buckets "athena-datasource-alias" and "bedrock-agents-athena-output-alias". Make sure that both of these buckets are empty by deleting the files. 
 - Choose 'Delete' and confirm by entering the bucket name.
 
 2.	Remove Lambda Function:
@@ -366,11 +366,7 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 - In the Bedrock console, navigate to 'Agents'.
 - Select the created agent, then choose 'Delete'.
 
-4.	Deregister Knowledge Base in Bedrock:
-- Access the Bedrock console, then navigate to “Knowledge base” under the Orchestration tab.
-- Select, then delete the created knowledge base.
-
-5.	Clean Up Cloud9 Environment:
+54	Clean Up Cloud9 Environment:
 - Navigate to the Cloud9 management console.
 - Select the Cloud9 environment you created, then delete.
 
