@@ -5,7 +5,7 @@ import pandas as pd
 from PIL import Image, ImageOps, ImageDraw
 
 # Streamlit page configuration
-st.set_page_config(page_title="Co. Portfolio Creator", page_icon=":robot_face:", layout="wide")
+st.set_page_config(page_title="Text2SQL Agent", page_icon=":robot_face:", layout="wide")
 
 # Function to crop image into a circle
 def crop_to_circle(image):
@@ -17,7 +17,7 @@ def crop_to_circle(image):
     return result
 
 # Title
-st.title("Co. Portfolio Creator")
+st.title("Text2SQL Agent - Amazon Athena")
 
 # Display a text box for input
 prompt = st.text_input("Please enter your query?", max_chars=2000)
@@ -64,7 +64,7 @@ def format_response(response_body):
 # Handling user input and responses
 if submit_button and prompt:
     event = {
-        "sessionId": "MYSESSION",
+        "sessionId": "MYSESSION4",
         "question": prompt
     }
     response = agenthelper.lambda_handler(event, None)
@@ -99,7 +99,7 @@ if submit_button and prompt:
 if end_session_button:
     st.session_state['history'].append({"question": "Session Ended", "answer": "Thank you for using AnyCompany Support Agent!"})
     event = {
-        "sessionId": "MYSESSION",
+        "sessionId": "MYSESSION4",
         "question": "placeholder to end session",
         "endSession": True
     }
@@ -145,17 +145,14 @@ for chat in reversed(st.session_state['history']):
 st.write("## Test Action Group - Athena Queries")
 st.markdown("""
 
-    ATHENA Queries:
-    a. Return all procedures in the imaging category and that are insured
+    a. Return all procedures in the imaging category and are insured. Include all the details and athena query generated
 
-    b. Fetch me how many procedures are in the laboratory category
+    b. Fetch me how many procedures are in the laboratory category, along with the Athena query created
 
     c. Return me the number of procedures that are either in the laboratory, imaging or surgery category, and that are insured
 
-    d. Return me all customers who have a past due balance of over 70 dollars
+    d. Return me information on all customers who have a past due balance of over 70 dollars
 
-    e. Get me all of the customers who are vip, and have a blance under 500 dollars
-
-    e. Fetch me data of all procedures that were not insured, and the customer names
+    f. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created (This query will show duplicates because the agent creates a JOIN query, and Amazon Athena does not have integrity constraints.)
 
 """)
