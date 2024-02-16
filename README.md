@@ -18,7 +18,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ### Step 1: Grant Model Access
 
-- We will need to grant access to the models that will be needed for our agent in Bedrock. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select “Model access”. On the right, select the orange “manage model access” button.
+- We will need to grant access to the models that will be needed for our Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select “Model access”. On the right, select the orange “manage model access” button.
 
 ![Model access](Streamlit_App/images/model_access.png)
 
