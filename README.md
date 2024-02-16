@@ -47,7 +47,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. Make sure to update the alias. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step. 
 
-- We will add the API schema for the Lambda function in order for it to communicate with the Bedrock agent. Download this [schema file](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) and upload to an S3 bucket. To refrain from creating additional S3 buckets, we will use `athena-destination-store-{alias}` for now. 
+- Also, we will add the API schema for the Lambda function in order for it to communicate with the Bedrock agent. Download this [schema file](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) and upload to an S3 bucket. To refrain from creating additional S3 buckets, we will use `athena-destination-store-{alias}` for now. 
 
 
 ### Step 3: Setup  Amazon Athena
