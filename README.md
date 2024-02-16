@@ -24,7 +24,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 - Select the checkbox next to "Anthropic", and "Amazon" if not by default already. After, scroll down to the bottom right and save the changes. 
 
-- After, verify that the Access status of the Models is green stating “Access granted”.
+- After, verify that the Access status of the Models are green with “Access granted”.
 
 ![Access granted](Streamlit_App/images/access_granted.png)
 
