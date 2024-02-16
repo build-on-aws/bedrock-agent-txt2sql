@@ -15,7 +15,7 @@ def lambda_handler(event, context):
 
         print("the received QUERY:",  query)
         
-        s3_output = 's3://bedrock-agents-athena-output-alias'  # Replace with your S3 bucket
+        s3_output = 's3://athena-destination-store-alias'  # Replace with your S3 bucket
 
         # Execute the query and wait for completion
         execution_id = execute_athena_query(query, s3_output)
