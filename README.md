@@ -145,7 +145,7 @@ WHERE balance >= 0;`
 
 - Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. Then, update the alias in the s3 output value in the python code.
 
-- After, select the deploy under "Code source" in the Lambda console. Review the code provided before moving to the next step.
+- After, select deploy under "Code source" in the Lambda console. Review the code provided before moving to the next step.
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
