@@ -159,7 +159,7 @@ WHERE balance >= 0;`
 
 ![Lambda role name 2](Streamlit_App/images/lambda_config1.png)
 
--Update the memory to 1024 BM, and Timeout to 1 minute. Scroll to the bottom, and save the changes.
+- Update the memory to 1024 MB, and Timeout to 1 minute. Scroll to the bottom, and save the changes.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_config2.png)
 
@@ -207,11 +207,11 @@ WHERE balance >= 0;`
 
 - Select the `Orchestration` tab. Toggle on the radio button `Override orchestration template defaults`. Make sure `Activate orchestration template` is enabled as well.
 
-- In the `Prompt template editor`, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas within the prompt `(Make sure to update the alias)`:
+- In the `Prompt template editor`, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt `(Make sure to update the alias)`:
 
 ```sql
 <athena_schema>
-CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.customers (
+CREATE EXTERNAL TABLE athena_db.customers (
   `Cust_Id` integer,
   `Customer_Name` string,
   `Balance` integer,
@@ -226,7 +226,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 </athena_schema>
 
 <athena_schema>
-CREATE EXTERNAL TABLE IF NOT EXISTS athena_db.procedures (
+CREATE EXTERNAL TABLE athena_db.procedures (
   `Procedure_ID` string,
   `Procedure_Name` string,
   `Category` string,
