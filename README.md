@@ -2,12 +2,12 @@
 # Setup Amazon Bedrock Agent for Text2SQL Using Amazon Athena with Streamlit
 
 ## Introduction
-We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases.
+We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL datastores.
 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access granted to all Amazon models if not by default already, and Anthropic Claude models from the Amazon Bedrock console.
+- Grant access to all Amazon models if not already be default, and Anthropic Claude models from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -143,7 +143,9 @@ WHERE balance >= 0;`
 
 ![Create Function2](Streamlit_App/images/create_function2.png)
 
-- Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. After, select the deploy button under "Code source" in the Lambda console. Review the code provided before moving to the next step.
+- Copy the provided code from the [lambda_function.py](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/function/lambda_function.py) file into your Lambda function. Then, update the alias in the s3 output value in the python code.
+
+- After, select the deploy under "Code source" in the Lambda console. Review the code provided before moving to the next step.
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
@@ -222,7 +224,7 @@ WHERE balance >= 0;`
 
 ```sql
 <athena_schema>
-CREATE EXTERNAL TABLE athena_db.customers (
+TABLE athena_db.customers (
   `Cust_Id` integer,
   `Customer` string,
   `Balance` integer,
@@ -237,7 +239,7 @@ LOCATION 's3://athena-destination-store-{alias}/';
 </athena_schema>
 
 <athena_schema>
-CREATE EXTERNAL TABLE athena_db.procedures (
+TABLE athena_db.procedures (
   `Procedure_ID` string,
   `Procedure` string,
   `Category` string,
@@ -293,7 +295,7 @@ It should look similar to the following:
 
 - Example prompts for Action Groups:
 
-    1. Return all procedures in the imaging category and are insured. Include all the details and athena query generated
+    1. Return all procedures in the imaging category and are insured. Include all the details and athena query generated.
 
     2. Get me details on all of the customers who are vip, with a balance under 500. Provide the Athena query used
 
