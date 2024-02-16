@@ -29,6 +29,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ![Access granted](Streamlit_App/images/access_granted.png)
 
 
+
 ### Step 2: Creating S3 Buckets
 - Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
@@ -45,6 +46,7 @@ These files contain mock data of customer and procedure information, and the sch
 
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service in a later step.
  
+
 
 ### Step 3: Setup  Amazon Athena
 
@@ -123,6 +125,7 @@ WHERE balance >= 0;`
 - If tests were succesful, we can move to the next step.
 
 
+
 ### Step 4: Lambda Function Configuration
 - Create a Lambda function (Python 3.12) for the Bedrock agent's action group. We will call this Lambda function "bedrock-agent-txtsql-action". 
 
@@ -167,6 +170,7 @@ WHERE balance >= 0;`
 - We are now done setting up the Lambda function
 
 
+
 ### Step 5: Setup Bedrock Agent and Action Group 
 - Navigate to the Bedrock console, go to the toggle on the left, and under “Orchestration” select Agents, then select “Create Agent”.
 
@@ -184,12 +188,11 @@ WHERE balance >= 0;`
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
-- When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the S3 bucket "athena-datasource-alias". Select Next, then Next again, as we are not associating a knowledge base. 
+- When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the S3 bucket "athena-datasource-alias". 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
-
-Create the Agent
+- Select next, then next again, as we are not associating a knowledge base. Then create the Agent
 
 ![Create agent](Streamlit_App/images/create_agent.png)
 
