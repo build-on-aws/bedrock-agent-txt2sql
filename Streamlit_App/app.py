@@ -151,7 +151,9 @@ st.markdown("""
 
     c. Return me the number of procedures that are either in the laboratory, imaging or surgery category, and that are insured
 
-    d. Return me information on all customers who have a past due balance of over 70 dollars
+    d. Return me information on all customers who have a past due amount over 70
+            
+    e. Provide me details on all customser who are vip, and have a balance under 300
 
     f. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created (This query will show duplicates because the agent creates a JOIN query, and Amazon Athena does not have integrity constraints.)
 
