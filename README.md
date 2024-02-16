@@ -88,7 +88,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-{alias}/';
+LOCATION 's3://athena-destination-store-{alias}/';
 ```
 
 
@@ -108,7 +108,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-{alias}/';
+LOCATION 's3://athena-destination-store-{alias}/';
 ```
 
 
