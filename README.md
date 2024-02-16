@@ -168,7 +168,7 @@ WHERE balance >= 0;`
 
 ![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
 
-- The last thing we need to do with the Lambda is update the configurations. Navigate to the `Configuration` tab, then `General Configuration` section from the right. From here select Edit.
+- The last thing we need to do with the Lambda is update the configurations. Navigate to the `Configuration` tab, then `General Configuration` section on the left. From here select Edit.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_config1.png)
 
