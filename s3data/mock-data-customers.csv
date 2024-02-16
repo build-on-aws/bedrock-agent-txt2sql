@@ -1,4 +1,4 @@
-Cust_Id, Customer_Name, Balance (USD), Past_Due (USD), Vip
+Cust_Id, Customer, Balance (USD), Past_Due (USD), Vip
 001,"John Doe",100,100,"yes"
 002,"Nancy Poo",1000,500,"yes"
 003,"Jane Batsy",350,0,"yes"
