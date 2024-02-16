@@ -77,11 +77,11 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ```sql
 CREATE EXTERNAL TABLE athena_db.customers (
-  Cust_Id integer,
-  Customer_Name string,
-  Balance integer,
-  Past_Due integer,
-  Vip string
+  `Cust_Id` integer,
+  `Customer_Name` string,
+  `Balance` integer,
+  `Past_Due` integer,
+  `Vip` string
 )
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
@@ -95,13 +95,13 @@ Open another query tab and create the `procedures` table by running this query. 
 
 ```sql
 CREATE EXTERNAL TABLE athena_db.procedures (
-  "Procedure_ID" string,
-  "Procedure" string,
-  "Category" string,
-  "Price" integer,
-  "Duration" integer,
-  "Insurance_Covered" string,
-  "Customer_Id" integer
+  `Procedure_ID` string,
+  `Procedure` string,
+  `Category` string,
+  `Price` integer,
+  `Duration` integer,
+  `Insurance_Covered` string,
+  `Customer_Id` integer
 )
 ROW FORMAT DELIMITED 
 FIELDS TERMINATED BY ',' 
