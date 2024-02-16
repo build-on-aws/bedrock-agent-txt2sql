@@ -236,7 +236,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-destination-store-{alias}/';  
+LOCATION 's3://athena-datasource-{alias}/';  
 </athena_schema>
 
 <athena_schema>
@@ -253,7 +253,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://athena-destination-store-{alias}/';  
+LOCATION 's3://athena-datasource-{alias}/';  
 </athena_schema>
 
 <athena_example>
