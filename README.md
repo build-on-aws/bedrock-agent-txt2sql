@@ -44,7 +44,7 @@ These files contain mock data of customer and procedure information, and the sch
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service in a later step.
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it "athena-destination-store-alias". You will need to use this S3 bucket when configuring the Amazon Athena service in the next step.
  
 
 
