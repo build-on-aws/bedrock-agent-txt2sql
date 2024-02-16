@@ -144,6 +144,28 @@ WHERE balance >= 0;`
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
+- We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` secion, select the Role name:
+
+![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
+
+- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies `AmazonAthenaFullAccess` and `AmazonS3FullAccess` by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
+
+![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
+
+- The last thing we need to do with the Lambda is update the configurations. Navigate to the `Configuration` tab, then `General Configuration` section from the right. From here select Edit.
+
+![Lambda role name 2](Streamlit_App/images/lambda_config1.png)
+
+-Update the memory to 1024 BM, and Timeout to 1 minute. Scroll to the bottom, and save the changes.
+
+![Lambda role name 2](Streamlit_App/images/lambda_config2.png)
+
+
+![Lambda role name 3](Streamlit_App/images/lambda_config3.png)
+
+
+- We are now done setting up the Lambda function
+
 
 ### Step 5: Setup Bedrock Agent and Action Group 
 - Navigate to the Bedrock console, go to the toggle on the left, and under “Orchestration” select Agents, then select “Create Agent”.
@@ -158,7 +180,7 @@ WHERE balance >= 0;`
 
 - Select the Anthropic: Claude V2 model. Now, we need to add instructions by creating a prompt that defines the rules of operation for the agent. In the prompt below, we provide specific direction on how the model should answer questions. Copy, then paste the details below into the agent instructions. 
 
-"You are a SQL developer that creates queries for Amazon Athena and returns data when requested. You will use the schema tables provided here <athena_schema> to create queries for the Athena database. Format every query correctly. Be friendly in every response."
+"You are a SQL developer that creates queries for Amazon Athena and returns data when requested. You will use the schema tables provided here <athena_schema> to create queries for the Athena database like <athena_example>. Format every query correctly. Be friendly in every response"
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
@@ -182,7 +204,7 @@ Create the Agent
 
 - Select the `Orchestration` tab. Toggle on the radio button `Override orchestration template defaults`. Make sure `Activate orchestration template` is enabled as well.
 
-- In the `Prompt template editor`, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas within the prompt:
+- In the `Prompt template editor`, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas within the prompt `(Make sure to update the alias)`:
 
 ```sql
 <athena_schema>
@@ -197,7 +219,7 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';  
+LOCATION 's3://athena-datasource-{alias}/';  
 </athena_schema>
 
 <athena_schema>
@@ -214,8 +236,17 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ',' 
 LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
-LOCATION 's3://genai-sourcedata-jo4/';  
+LOCATION 's3://athena-datasource-{alias}/';  
 </athena_schema>
+
+<athena_example>
+SELECT * FROM athena_db.procedures WHERE insurance_covered = 'yes' OR insurance_covered = 'no';  
+</athena_example>
+
+<athena_example>
+  SELECT * FROM athena_db.customers WHERE balance >= 0;
+</athena_example>
+
 ```
 
 
@@ -245,8 +276,10 @@ It should look similar to the following:
 
 ![Agent test](Streamlit_App/images/agent_test.png)
 
+
 - Example prompts for Action Groups:
-    1. Return all procedures in the imaging category and are insured. Including the details
+
+    1. Return all procedures in the imaging category and are insured. Include all the details
 
     2. Fetch me how many procedures are in the laboratory category, along with the Athena query created
 
@@ -256,7 +289,8 @@ It should look similar to the following:
 
     5. Get me all of the customers who are vip, and have a blance under 500 dollars
 
-    6. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created
+    6. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created `(This query may return duplicates because it is creating a join query for Athena, and this service does not have integrity constraints)`
+
 
 ## Step 8: Setting Up Cloud9 Environment (IDE)
 
