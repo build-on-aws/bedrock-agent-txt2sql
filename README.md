@@ -186,6 +186,7 @@ WHERE balance >= 0;`
 
 `You are a SQL developer that creates queries for Amazon Athena and returns data when requested. You will use the schema tables provided here <athena_schema> to create queries for the Athena database like <athena_example>. Format every query correctly. Be friendly in every response`
 
+
 ![Model select2](Streamlit_App/images/select_model.png)
 
 - When creating the action group, call it `query-athena`. Select Lambda function "bedrock-agent-txtsql-action". Next, select the schema file athena-schema.json from the S3 bucket "athena-datasource-alias". 
@@ -211,7 +212,7 @@ WHERE balance >= 0;`
 
 ```sql
 <athena_schema>
-CREATE EXTERNAL TABLE athena_db.customers (
+TABLE athena_db.customers (
   `Cust_Id` integer,
   `Customer_Name` string,
   `Balance` integer,
@@ -226,7 +227,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 </athena_schema>
 
 <athena_schema>
-CREATE EXTERNAL TABLE athena_db.procedures (
+TABLE athena_db.procedures (
   `Procedure_ID` string,
   `Procedure_Name` string,
   `Category` string,
