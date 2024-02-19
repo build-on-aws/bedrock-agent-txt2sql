@@ -64,7 +64,7 @@ def format_response(response_body):
 # Handling user input and responses
 if submit_button and prompt:
     event = {
-        "sessionId": "MYSESSION",
+        "sessionId": "MYSESSION10",
         "question": prompt
     }
     response = agenthelper.lambda_handler(event, None)
@@ -99,7 +99,7 @@ if submit_button and prompt:
 if end_session_button:
     st.session_state['history'].append({"question": "Session Ended", "answer": "Thank you for using AnyCompany Support Agent!"})
     event = {
-        "sessionId": "MYSESSION",
+        "sessionId": "MYSESSION10",
         "question": "placeholder to end session",
         "endSession": True
     }
@@ -145,16 +145,16 @@ for chat in reversed(st.session_state['history']):
 st.write("## Test Action Group - Athena Queries")
 st.markdown("""
 
-    a. Return all procedures in the imaging category and are insured. Include all the details and athena query generated
+    a. Create a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
 
-    b. Fetch me how many procedures are in the laboratory category, along with the Athena query created
+    b. Create an athena query to return the number of procedures that are in the laboratory category. Also return the created query
 
-    c. Return me the number of procedures that are either in the laboratory, imaging or surgery category, and that are insured
+    c. Create an athena query that returns the number of procedures that are either in the laboratory, imaging or surgery category, and insured
 
-    d. Return me information on all customers who have a past due amount over 70
+    d. Create an athena query that returns me information on all customers who have a past due amount over 70
             
-    e. Provide me details on all customser who are vip, and have a balance under 300
+    e. Create an athena query that provides me details on all customser who are vip, and have a balance under 300
 
-    f. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created (This query will show duplicates because the agent creates a JOIN query, and Amazon Athena does not have integrity constraints.)
+    f. Create an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created (This query will show duplicates because the agent creates a JOIN query, and Amazon Athena does not have integrity constraints.)
 
 """)
