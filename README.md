@@ -243,7 +243,7 @@ def lambda_handler(event, context):
     return api_response
 ```
 
-- Then, update the **alias** value for the `s3_output` variable in the python code above. After, select deploy under **Code source** in the Lambda console. Review the code provided before moving to the next step.
+- Then, update the **alias** value for the `s3_output` variable in the python code above. After, select **Deploy** under **Code source** in the Lambda console. Review the code provided before moving to the next step.
 
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
