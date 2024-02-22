@@ -378,11 +378,11 @@ It should look similar to the following:
 ![Save N exit](Streamlit_App/images/saveNexit.png)
 
 ### Step 6: Create an alias
-- Create an alias (new version), and choose a name of your liking. Make sure to copy and save your Agent ID and Agent Alias ID. You will need these in step 9.
+- Create an alias (new version), and choose a name of your liking. Make sure to copy and save your **AliasID**. You will need these in step 9.
  
 ![Create alias](Streamlit_App/images/create_alias.png)
 
-- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Copy the Agent ARN, then add this ARN to the resource policy of Lambda function `bedrock-agent-txtsql-action` previously created in step 3. 
+- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Copy the Agent ARN, then add this ARN to the resource policy for Lambda function `bedrock-agent-txtsql-action` that was previously created in step 3. (Make sure to also save the **AgentID** at this step. It will be needed in step 9.)
 
 ![Agent ARN2](Streamlit_App/images/agent_arn2.png)
 
