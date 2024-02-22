@@ -311,11 +311,11 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 ![Create agent](Streamlit_App/images/create_agent.png)
 
 
-- Now, we will need to provide our Bedrock agent the schemas for our Athena tables in order to build the SQL queries. On the Agent Overview screen, scroll down and select Working draft
+- Now, we need to provide the Bedrock agent the table schemas for Amazon Athena in order to build the queries. On the Agent Overview screen, scroll down and select **Working draft**
 
 ![Working draft](Streamlit_App/images/working_draft.png)
 
-- Go down to Advanced prompts and select edit
+- Go down to Advanced prompts and select **edit**
 
 ![advanced prompt btn](Streamlit_App/images/advance_prompt_btn.png)
 
