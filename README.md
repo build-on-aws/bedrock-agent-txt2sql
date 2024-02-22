@@ -248,7 +248,7 @@ def lambda_handler(event, context):
 
 ![Lambda deploy](Streamlit_App/images/lambda_deploy.png)
 
-- Next, apply a resource policy to the Lambda to grant Bedrock agent access. To do this, we will switch the top tab from **code** to **configuration** and the side tab to **Permissions**. Then, scroll to the **Resource-based policy statements** section and click the **Add permissions** button.
+- Now, we need to apply a resource policy to Lambda that grants Bedrock agent access. To do this, we will switch the top tab from **code** to **configuration** and the side tab to **Permissions**. Then, scroll to the **Resource-based policy statements** section and click the **Add permissions** button.
 
 ![Permissions config](Streamlit_App/images/permissions_config.png)
 
