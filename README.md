@@ -428,7 +428,7 @@ It should look similar to the following:
 
 
 ## Step 9: Setting Up and Running the Streamlit App
-1. **Obtain the Streamlit App ZIP File**: Download the zip file of the project [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/archive/refs/heads/main.zipp).
+1. **Obtain the Streamlit App ZIP File**: Download the zip file of the project [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/archive/refs/heads/main.zip).
 
 2. **Upload to Cloud9**:
    - In your Cloud9 environment, upload the ZIP file.
