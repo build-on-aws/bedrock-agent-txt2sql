@@ -296,7 +296,7 @@ def lambda_handler(event, context):
 - Select the **Anthropic: Claude V2 model**. Next, we add instructions by creating a prompt that defines the rules of operation for the agent such as querying Athena and providing data. In the prompt below, we give specific direction on how the model should answer questions. Copy, then paste the details below into the agent instructions. 
 
 ```text
-You are a SQL developer that creates queries for Amazon Athena and returns data when requested. You will use the schema tables provided here <athena_schema> to create queries for the Athena database like <athena_example>. Format every query correctly. Be friendly in every response
+You are a SQL developer that creates queries for Amazon Athena and returns data and Athena queries when requested. You will use the schema tables provided here <athena_schema> to create queries for the Athena database like <athena_example>. Format every query correctly. Be friendly in every response
 ```
 
 
@@ -325,45 +325,53 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 - In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt:
 
 ```sql
-<athena_schema>
-CREATE EXTERNAL TABLE athena_db.customers (
-  `Cust_Id` integer,
-  `Customer` string,
-  `Balance` integer,
-  `Past_Due` integer,
-  `Vip` string
-)
-ROW FORMAT DELIMITED 
-FIELDS TERMINATED BY ',' 
-LINES TERMINATED BY '\n'
-STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-{alias}/';  
-</athena_schema>
+Here are the table schemas for the Amazon Athena database <athena_schemas>. 
 
-<athena_schema>
-CREATE EXTERNAL TABLE athena_db.procedures (
-  `Procedure_ID` string,
-  `Procedure` string,
-  `Category` string,
-  `Price` integer,
-  `Duration` integer,
-  `Insurance_Covered` string,
-  `Customer_Id` integer
-)
-ROW FORMAT DELIMITED 
-FIELDS TERMINATED BY ',' 
-LINES TERMINATED BY '\n'
-STORED AS TEXTFILE
-LOCATION 's3://athena-datasource-{alias}/';  
-</athena_schema>
+<athena_schemas>
+  <athena_schema>
+  CREATE EXTERNAL TABLE athena_db.customers (
+    `Cust_Id` integer,
+    `Customer` string,
+    `Balance` integer,
+    `Past_Due` integer,
+    `Vip` string
+  )
+  ROW FORMAT DELIMITED 
+  FIELDS TERMINATED BY ',' 
+  LINES TERMINATED BY '\n'
+  STORED AS TEXTFILE
+  LOCATION 's3://athena-datasource-{alias}/';  
+  </athena_schema>
+  
+  <athena_schema>
+  CREATE EXTERNAL TABLE athena_db.procedures (
+    `Procedure_ID` string,
+    `Procedure` string,
+    `Category` string,
+    `Price` integer,
+    `Duration` integer,
+    `Insurance_Covered` string,
+    `Customer_Id` integer
+  )
+  ROW FORMAT DELIMITED 
+  FIELDS TERMINATED BY ',' 
+  LINES TERMINATED BY '\n'
+  STORED AS TEXTFILE
+  LOCATION 's3://athena-datasource-{alias}/';  
+  </athena_schema>
+</athena_schemas>
 
-<athena_example>
-SELECT * FROM athena_db.procedures WHERE insurance_covered = 'yes' OR insurance_covered = 'no';  
-</athena_example>
+Here are examples of Amazon Athena queries <athena_examples>. Double check every query for correct format. You can also provide Amazon Athena queries if requested.
 
-<athena_example>
-  SELECT * FROM athena_db.customers WHERE balance >= 0;
-</athena_example>
+<athena_examples>
+  <athena_example>
+  SELECT * FROM athena_db.procedures WHERE insurance_covered = 'yes' OR insurance_covered = 'no';  
+  </athena_example>
+  
+  <athena_example>
+    SELECT * FROM athena_db.customers WHERE balance >= 0;
+  </athena_example>
+</athena_examples>
 
 ```
 
