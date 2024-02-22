@@ -322,7 +322,7 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 
 - Select the **Orchestration** tab. Toggle on the radio button **Override orchestration template defaults**. Make sure **Activate orchestration template** is enabled as well.
 
-- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt `(update the {alias})`:
+- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt:
 
 ```sql
 <athena_schema>
@@ -372,10 +372,10 @@ It should look similar to the following:
 
 ![Orchestration edit](Streamlit_App/images/orch_edit.png)
 
-
-- Scroll to the bottom, then select **Save and exit**
+-Verify that the **alias** has been updated for both table schemas. Then, scroll to the bottom and select **Save and exit**
 
 ![Save N exit](Streamlit_App/images/saveNexit.png)
+
 
 ### Step 6: Create an alias
 - Create an alias (new version), and choose a name of your liking. Make sure to copy and save your **AliasID**. You will need these in step 9.
