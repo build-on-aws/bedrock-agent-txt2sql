@@ -315,7 +315,8 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 
 ![Working draft](Streamlit_App/images/working_draft.png)
 
-- Go down to Advanced prompts and select **edit**
+
+- Go down to **Advanced prompts** and select **edit**
 
 ![advanced prompt btn](Streamlit_App/images/advance_prompt_btn.png)
 
