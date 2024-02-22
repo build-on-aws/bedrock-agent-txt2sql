@@ -306,7 +306,7 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
-- Select **next**, then **next** again, as we are not associating a knowledge base. Then create the Agent
+- Select **Next**, then **Next** again, as we are not associating a knowledge base. Then create the Agent
 
 ![Create agent](Streamlit_App/images/create_agent.png)
 
