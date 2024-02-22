@@ -95,7 +95,7 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 ```sql
 CREATE EXTERNAL TABLE athena_db.customers (
   `Cust_Id` integer,
-  `Customer_Name` string,
+  `Customer` string,
   `Balance` integer,
   `Past_Due` integer,
   `Vip` string
