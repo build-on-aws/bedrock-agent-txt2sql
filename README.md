@@ -54,7 +54,7 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. Make sure to update the alias. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step. 
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step. 
 
 - Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command within a cmd(command prompt):
 
@@ -322,7 +322,7 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 
 - Select the **Orchestration** tab. Toggle on the radio button **Override orchestration template defaults**. Make sure **Activate orchestration template** is enabled as well.
 
-- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt `(Make sure to update the alias)`:
+- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt `(update the {alias})`:
 
 ```sql
 <athena_schema>
