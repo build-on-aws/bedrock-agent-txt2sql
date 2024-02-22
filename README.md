@@ -302,7 +302,7 @@ You are a SQL developer that creates queries for Amazon Athena and returns data 
 
 ![Model select2](Streamlit_App/images/select_model.png)
 
-- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Then, select the schema file `athena-schema.json` from S3 bucket `athena-destination-store-{alias}`. 
+- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Then, select the API schema `athena-schema.json` from S3 bucket `athena-destination-store-{alias}`. 
 
 ![Add action group](Streamlit_App/images/action_group_add.png)
 
