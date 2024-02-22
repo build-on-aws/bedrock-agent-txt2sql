@@ -438,7 +438,7 @@ It should look similar to the following:
 3. **Unzip the File**:
    - Use the command `unzip bedrock-agent-txt2sql-main.zip` to extract the contents.
 4. **Navigate to Streamlit_App Folder**:
-   - Change to the directory containing the Streamlit app. Use the command `cd ~/environment/bedrock-agents-txt2sql-main/Streamlit_App`
+   - Change to the directory containing the Streamlit app. Use the command `cd ~/environment/bedrock-agent-txt2sql-main/Streamlit_App`
 5. **Update Configuration**:
    - Open the `InvokeAgent.py` file.
    - Update the `agentId` and `agentAliasId` variables with the appropriate values, then save it.
