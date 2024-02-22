@@ -254,7 +254,7 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID` for now. We will include the ARN once it’s generated in step 6 after creating the Bedrock Agent alias):
+- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID` for now. We will include the ARN once it’s generated in step 6 after creating the Bedrock agent alias):
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
@@ -283,7 +283,7 @@ def lambda_handler(event, context):
 
 
 ### Step 5: Setup Bedrock Agent and Action Group 
-- Navigate to the Bedrock console, go to the toggle on the left, and under **Orchestration** select Agents, then select **Create Agent**.
+- Navigate to the Bedrock console, go to the toggle on the left, and under **Orchestration** select **Agents**, then select **Create Agent**.
 
 ![Orchestration2](Streamlit_App/images/orchestration2.png)
 
