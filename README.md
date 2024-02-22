@@ -34,8 +34,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ### Step 2: Creating S3 Buckets
 - Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
-
-::alert[Make sure to update **{alias}** with the appropriate value throughout this workshop.]
+(Make sure to update **{alias}** with the appropriate value throughout this workshop.)
 
 
 ![Bucket create 1](Streamlit_App/images/bucket_pic_1.png)
