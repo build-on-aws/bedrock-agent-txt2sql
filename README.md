@@ -44,9 +44,9 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 - After creation, download the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) by using the following `curl` command within a cmd(command prompt):
 
 ```python
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3Docs/mock-data-customers.csv --output ~/Downloads/mock-data-customers.csv
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-customers.csv --output ~/Downloads/mock-data-customers.csv
 
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3Docs/mock-data-procedures.csv --output ~/Downloads/mock-data-procedures.csv
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-procedures.csv --output ~/Downloads/mock-data-procedures.csv
 ```
 
 - These files contain mock data of customer and procedure information. We will use these files that were downloaded in the **Downloads** folder as the datasource for our Amazon Athena service. Upload these files to S3 bucket `athena-datasource-{alias}`. Once the documents are uploaded, please review them.
