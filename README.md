@@ -18,13 +18,14 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ### Step 1: Grant Model Access
 
-- We will need to grant access to the models that will be needed for our Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange “manage model access” button.
+- We will need to grant access to the models that will be needed for our Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange **Manage model access** button.
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox next to "Anthropic", and "Amazon" if not by default already. After, scroll down to the bottom right and save the changes. 
+- Select the checkbox next to the base models for the **Anthropic** column. Also, verify that **Titan Embeddings G1 - Text** column is checked, if not by default. This will provide you access only to the required models. After, scroll down to the bottom right and select **Request model access**.
 
-- After, verify that the Access status of the Models are green with “Access granted”.
+
+- After, verify that the Access status of the Models are green with **Access granted**.
 
 ![Access granted](Streamlit_App/images/access_granted.png)
 
@@ -38,7 +39,15 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
-- After creation, upload the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data). These files contain mock data of customer and procedure information. We will use these files as the datasource for our Amazon Athena service to query from. Once the documents are uploaded, please review them.
+- After creation, download the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) by using the following `curl` command within a cmd(command prompt):
+
+```python
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3Docs/mock-data-customers.csv --output ~/Documents/mock-data-customers.csv
+
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3Docs/mock-data-customers.csv --output ~/Documents/mock-data-procedures.csv
+```
+
+- These files contain mock data of customer and procedure information. We will use these files that were downloaded in the **Documents** folder as the datasource for our Amazon Athena service. Upload these files to S3 bucket `athena-datasource-{alias}`. Once the documents are uploaded, please review them.
 
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
