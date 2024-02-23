@@ -418,10 +418,10 @@ It should look similar to the following:
 ![create_environment](Streamlit_App/images/create_environment.png)
 
 2. Here, you will enter the following values in each field
-   - Name: Bedrock-Environment (Enter any name)
-   - Instance type: t3.small
-   - Platform: Ubuntu Server 22.04 LTS
-   - Timeout: 1 hour  
+   - **Name:** Bedrock-Environment (Enter any name)
+   - **Instance type:** t3.small
+   - **Platform:** Ubuntu Server 22.04 LTS
+   - **Timeout:** 1 hour  
 
 ![ce2](Streamlit_App/images/ce2.png)
 
