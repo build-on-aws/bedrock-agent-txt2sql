@@ -154,5 +154,5 @@ st.markdown("""
             
     e. Fetch me data by creating an athena query that provides me details on all customser who are vip, and have a balance over 300.
 
-    f. Fetch me data by creating an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN.)
+    f. Fetch me data by creating an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN. You may see duplicates becuase Amazon Athena is not integrity constraint bound.)
 """)
