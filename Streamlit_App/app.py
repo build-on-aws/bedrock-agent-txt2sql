@@ -144,17 +144,15 @@ for chat in reversed(st.session_state['history']):
 
 st.write("## Test Action Group - Athena Queries")
 st.markdown("""
+    a. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
 
-    a. Create a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
+    b. Fetch me data by creating an athena query to return the number of procedures that are in the laboratory category. Also return the created query.
 
-    b. Create an athena query to return the number of procedures that are in the laboratory category. Also return the created query
+    c. Fetch me data by creating an athena query that returns the number of procedures that are either in the laboratory, imaging or surgery category, and insured.
 
-    c. Create an athena query that returns the number of procedures that are either in the laboratory, imaging or surgery category, and insured
-
-    d. Create an athena query that returns me information on all customers who have a past due amount over 70
+    d. Fetch me data by creating an athena query that returns me information on all customers who have a past due amount over 70.
             
-    e. Create an athena query that provides me details on all customser who are vip, and have a balance under 300
+    e. Fetch me data by creating an athena query that provides me details on all customser who are vip, and have a balance over 300.
 
-    f. Create an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created (This query will show duplicates because the agent creates a JOIN query, and Amazon Athena does not have integrity constraints.)
-
+    f. Fetch me data by creating an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN.)
 """)
