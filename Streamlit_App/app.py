@@ -144,7 +144,7 @@ for chat in reversed(st.session_state['history']):
 
 st.write("## Test Action Group - Athena Queries")
 st.markdown("""
-    a. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
+    a. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created.
 
     b. Fetch me data by creating an athena query to return the number of procedures that are in the laboratory category. Also return the created query.
 
