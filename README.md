@@ -405,9 +405,9 @@ It should look similar to the following:
 
 - Example prompts for Action Groups:
 
-    1. Return all procedures in the imaging category and are insured. Include all the details and athena query generated.
+    1. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
 
-    2. Get me details on all of the customers who are vip, with a balance under 500. Provide the Athena query used
+    2. Fetch me data by creating an athena query that provides me details on all customser who are vip, and have a balance over 300.
 
 
 
