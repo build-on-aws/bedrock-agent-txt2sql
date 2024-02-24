@@ -37,7 +37,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 (Make sure to update **{alias}** with the appropriate value throughout the README instructions.)
 
 
-![Bucket create 1](Streamlit_App/images/bucket_pic_1.png)
+![Bucket create 1](Streamlit_App/images/bucket_setup.gif)
 
 ![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
