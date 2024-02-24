@@ -378,7 +378,7 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 
 It should look similar to the following:
 
-![Orchestration edit](Streamlit_App/images/orch_edit.png)
+![Orchestration edit](Streamlit_App/images/orch_edit.gif)
 
 -Verify that the **alias** has been updated for both table schemas. Then, scroll to the bottom and select **Save and exit**
 
