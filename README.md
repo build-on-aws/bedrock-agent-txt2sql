@@ -7,7 +7,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access will need to be granted to the Amazon model **Titan Embeddings G1 - Text**, and **Anthropic Claude Instant** model from the Amazon Bedrock console.
+- Access will need to be granted to the **Amazon model: Titan Embeddings G1 - Text**, and **Anthropic Claude Instant** model from the Amazon Bedrock console.
 
 
 ## Diagram
