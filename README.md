@@ -54,7 +54,7 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 ![bucket domain data](Streamlit_App/images/bucket_domain_data.png)
 
 
-- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring the Amazon Athena service in the next step. 
+- **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
 
 - Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command within a cmd(command prompt):
 
@@ -84,7 +84,7 @@ s3://athena-destination-store-{alias}
 ![choose athena bucket.png](Streamlit_App/images/choose_bucket.png)
 
 
-- Next, we will create an Athena database. Select the Editor tab, then copy/paste the following query in the empty query screen. After, select Run:
+- Next, we will create an Athena database. Select the **Editor** tab, then copy/paste the following query in the empty query screen. After, select Run:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS athena_db;
@@ -93,9 +93,9 @@ CREATE DATABASE IF NOT EXISTS athena_db;
 ![Create DB query](Streamlit_App/images/create_athena_db.png)
 
 
-- You should now see query successful at the bottom. On the left side under **Data**, change the default database to your database `athena_db` as shown in the screenshot above.
+- You should see query successful at the bottom. On the left side under **Data**, change the default database to `athena_db`, if not by default.
 
-- Now, let's create the `customers` table. Run the following query in Athena. `(Remember to update the {alias} field)`:
+- We'll need to create the `customers` table. Run the following query in Athena. `(Remember to update the {alias} field)`:
 
 ```sql
 CREATE EXTERNAL TABLE athena_db.customers (
