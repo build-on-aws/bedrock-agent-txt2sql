@@ -93,7 +93,7 @@ CREATE DATABASE IF NOT EXISTS athena_db;
 ![Create DB query](Streamlit_App/images/create_athena_db.png)
 
 
-- You should see query successful at the bottom. On the left side under **Data**, change the default database to `athena_db`, if not by default.
+- You should see query successful at the bottom. On the left side under **Database**, change the default database to `athena_db`, if not by default.
 
 - We'll need to create the `customers` table. Run the following query in Athena. `(Remember to update the {alias} field)`:
 
