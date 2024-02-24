@@ -7,7 +7,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Grant access to all Amazon models if not already be default, and Anthropic Claude models from the Amazon Bedrock console.
+- Access will need to be granted to the Amazon model **Titan Embeddings G1 - Text**, and **Anthropic Claude Instant** model from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -22,7 +22,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox next to the base models for the **Anthropic** column. Also, verify that **Titan Embeddings G1 - Text** column is checked, if not by default. This will provide you access only to the required models. After, scroll down to the bottom right and select **Request model access**.
+- Select the checkbox next to the base models for the **Anthropic** column. Also, verify that **Titan Embeddings G1 - Text** column is checked, if not by default. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
