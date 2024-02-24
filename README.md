@@ -39,7 +39,6 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Bucket create 1](Streamlit_App/images/bucket_setup.gif)
 
-![Bucket create 2](Streamlit_App/images/bucket_pic_2.png)
 
 - After creation, download the .csv files located [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/tree/main/s3data) by using the following `curl` command within a cmd(command prompt):
 
