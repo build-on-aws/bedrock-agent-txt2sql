@@ -77,16 +77,21 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 
 - Add the S3 prefix below for the query results location, then select the Save button:
 
-`s3://athena-destination-store-{alias}`
+```text
+s3://athena-destination-store-{alias}
+```
 
 ![choose athena bucket.png](Streamlit_App/images/choose_bucket.png)
 
 
 - Next, we will create an Athena database. Select the Editor tab, then copy/paste the following query in the empty query screen. After, select Run:
 
-`CREATE DATABASE IF NOT EXISTS athena_db;`
+```sql
+CREATE DATABASE IF NOT EXISTS athena_db;
+```
 
 ![Create DB query](Streamlit_App/images/create_athena_db.png)
+
 
 - You should now see query successful at the bottom. On the left side under **Data**, change the default database to your database `athena_db` as shown in the screenshot above.
 
@@ -108,7 +113,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
-Open another query tab and create the `procedures` table by running this query. `(Remember to update the {alias} field)`:
+- Open another query tab and create the `procedures` table by running this query. `(Remember to update the {alias} field)`:
 
 ```sql
 CREATE EXTERNAL TABLE athena_db.procedures (
@@ -128,22 +133,26 @@ LOCATION 's3://athena-datasource-{alias}/';
 ```
 
 
-Your tables for Athena within editor should look similar to the following:
+- Your tables for Athena within editor should look similar to the following:
 
 ![Athena editor env created](Streamlit_App/images/env_created.png)
 
 - Now, lets quickly test the queries against the customers and procedures table by running the following two example queries below:
 
-`SELECT *
+```sql
+SELECT *
 FROM athena_db.procedures
-WHERE insurance_covered = 'yes' OR insurance_covered = 'no';`
+WHERE insurance_covered = 'yes' OR insurance_covered = 'no';
+```
 
 ![procedures query](Streamlit_App/images/procedure_query.png)
 
 
-`SELECT * 
+```sql
+SELECT * 
 FROM athena_db.customers
-WHERE balance >= 0;`
+WHERE balance >= 0;
+```
 
 ![customers query](Streamlit_App/images/customer_query.png)
 
