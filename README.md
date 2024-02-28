@@ -407,7 +407,8 @@ It should look similar to the following:
 ## Step 7: Testing the Setup
 
 ### Testing the Bedrock Agent
-- While in the Bedrock console, select **Agents** under the Orchestration tab, then the agent you created. You should be able to enter prompts in the user interface provided to test your action groups from the agent.
+- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Make sure to **Prepare** the agent so that the changes made can update. You will be able to enter prompts in the user interface to test your Bedrock agent.
+
 
 ![Agent test](Streamlit_App/images/agent_test.png)
 
