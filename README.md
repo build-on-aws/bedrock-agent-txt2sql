@@ -417,7 +417,7 @@ It should look similar to the following:
 
     1. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
 
-    2. Fetch me data by creating an athena query that provides me details on all customser who are vip, and have a balance over 300.
+    2. Fetch me data by creating an athena query that provides me details on all customers who are vip, and have a balance over 300.
 
 
 
