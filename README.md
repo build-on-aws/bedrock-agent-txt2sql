@@ -41,12 +41,21 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 
 
-- Next, we will download .csv files that contain mock data for customers and procedures. Open up a command prompt, and run the following `curl` commands to download and save these files to the **Downloads** folder:
+- Next, we will download .csv files that contain mock data for customers and procedures. Open up a terminal or command prompt, and run the following `curl` commands to download and save these files to the **Documents** folder:
 
-```python
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-customers.csv --output ~/Downloads/mock-data-customers.csv
+For **Mac**
+```linux
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-customers.csv --output ~/Documents/mock-data-customers.csv
 
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-procedures.csv --output ~/Downloads/mock-data-procedures.csv
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-procedures.csv --output ~/Documents/mock-data-procedures.csv
+```
+
+For **Windows**
+
+```windows
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-customers.csv --output %USERPROFILE%\Documents\mock-data-customers.csv
+
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s3data/mock-data-procedures.csv --output %USERPROFILE%\Documents\mock-data-procedures.csv
 ```
 
 - These files are the datasource for Amazon Athena. Upload these files to S3 bucket `athena-datasource-{alias}`. Once the documents are uploaded, please review them.
@@ -56,10 +65,16 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
 
-- Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command within a cmd(command prompt):
+- Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command in ther terminal or command prompt:
 
-```bash
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output ~/Downloads/athena-schema.json
+For **Mac**
+```linux
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output ~/Documents/athena-schema.json
+```
+
+For **Windows**
+```Windows
+curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output %USERPROFILE%\Documents\athena-schema.json
 ```
 
 - Then, upload this file to S3 bucket `athena-destination-store-{alias}`. We will use this S3 bucket to store the schema to help reserve on resources. 
