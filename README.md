@@ -137,7 +137,7 @@ CREATE EXTERNAL TABLE athena_db.procedures (
   `Category` string,
   `Price` integer,
   `Duration` integer,
-  `Insurance_Covered` string,
+  `Insurance` string,
   `Customer_Id` integer
 )
 ROW FORMAT DELIMITED 
@@ -157,7 +157,7 @@ LOCATION 's3://athena-datasource-{alias}/';
 ```sql
 SELECT *
 FROM athena_db.procedures
-WHERE insurance_covered = 'yes' OR insurance_covered = 'no';
+WHERE insurance = 'yes' OR insurance = 'no';
 ```
 
 ![procedures query](Streamlit_App/images/procedure_query.png)
@@ -374,7 +374,7 @@ Here are the table schemas for the Amazon Athena database <athena_schemas>.
     `Category` string,
     `Price` integer,
     `Duration` integer,
-    `Insurance_Covered` string,
+    `Insurance` string,
     `Customer_Id` integer
   )
   ROW FORMAT DELIMITED 
@@ -389,7 +389,7 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 
 <athena_examples>
   <athena_example>
-  SELECT * FROM athena_db.procedures WHERE insurance_covered = 'yes' OR insurance_covered = 'no';  
+  SELECT * FROM athena_db.procedures WHERE insurance = 'yes' OR insurance = 'no';  
   </athena_example>
   
   <athena_example>
