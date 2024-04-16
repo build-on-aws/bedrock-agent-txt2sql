@@ -286,7 +286,7 @@ def lambda_handler(event, context):
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
-- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies `AmazonAthenaFullAccess` and `AmazonS3FullAccess` by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
+- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies ***AmazonAthenaFullAccess***,  ***AmazonS3FullAccess***, and ***KMSFullPolicy*** by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
 
