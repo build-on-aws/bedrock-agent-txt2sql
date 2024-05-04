@@ -17,6 +17,8 @@ import sys
 #echo $AWS_SECRET_ACCESS_KEY
 #echo $AWS_SESSION_TOKEN
 
+agentId = "xxx" #INPUT YOUR AGENT ID HERE
+agentAliasId = "xxx" # Hits draft alias, set to a specific alias id for a deployed version
 
 #os.environ["AWS_PROFILE"] = "agent-demo"
 theRegion = "us-west-2"
@@ -153,8 +155,6 @@ def decode_response(response):
 
 def lambda_handler(event, context):
     
-    agentId = "xxx" #INPUT YOUR AGENT ID HERE
-    agentAliasId = "xxx" # Hits draft alias, set to a specific alias id for a deployed version
     sessionId = event["sessionId"]
     question = event["question"]
     endSession = False
