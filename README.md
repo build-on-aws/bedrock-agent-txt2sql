@@ -461,7 +461,7 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 
 - This prompt helps provide the agent an example of the table schema(s) used for the database, along with an example of how the Amazon Athena query should be formatted. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
 
-- Scroll to the bottom and select the `Save and exit` button.
+- Scroll to the bottom and select the ***Save and exit***.
 
 
 
