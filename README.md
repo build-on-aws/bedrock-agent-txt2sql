@@ -66,19 +66,6 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
 
 
-For **Mac**
-```linux
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output ~/Documents/athena-schema.json
-```
-
-For **Windows**
-```Windows
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output %USERPROFILE%\Documents\athena-schema.json
-```
-
-- Then, upload this file to S3 bucket `athena-destination-store-{alias}`. We will use this S3 bucket to store the schema to help reserve on resources. 
-
-
 ### Step 3: Setup  Amazon Athena
 
 - Search for the Amazon Athena service, then navigate to the Athena management console. Validate that the **Query your data with Trino SQL** radio button is selected, then press **Launch query editor**.
@@ -306,15 +293,48 @@ def lambda_handler(event, context):
 
 
 ### Step 5: Setup Bedrock agent and action group 
-- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`. Provide an agent name, like **athena-agent** then create the agent.
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`, then ***Create Agent***. Provide an agent name, like `athena-agent` then ***Create***.
 
-- The agent description is optional, and we will use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
+![agent create](Streamlit_App/images/lagent_create.png)
+
+- The agent description is optional. We will use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
+
 
 ```instruction
-You are a SQL developer that creates queries for Amazon Athena. You are allowed to return data and Amazon Athena queries when requested. You will use the schema tables provided here {athena_schema} to create queries for the Athena database like {athena_example}. Return responses exactly how they are fetched. Be friendly in every response.
+Role: You are a SQL developer creating queries for Amazon Athena.
+
+Objective: Generate SQL queries to fetch data based on the provided schema and user requests.
+
+1. Query Decomposition and Understanding:
+   - Analyze the user’s request to understand the main objective.
+   - Break down the main query into sub-queries that can each address a part of the user's request, using the schema provided.
+
+2. SQL Query Creation:
+   - For each sub-query, use the relevant tables and fields from the provided schema.
+   - Construct SQL queries that are precise and tailored to retrieve the exact data required by the user’s request.
+
+3. Query Execution and Response:
+   - Execute the constructed SQL queries against the Amazon Athena database.
+   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy.
+   - Maintain a friendly and professional tone in all communications.
+
+4. Continuous Interaction:
+   - Keep track of the user’s session to better understand the context of subsequent queries.
+   - Adjust queries based on user feedback or additional data requirements that emerge during the session.
+
+Example:
+   - User Request: Provide me all the procedures that were insured.
+   - SQL Query Generation:
+     - Analyze the request: Identify key terms like 'all the procedures' and 'that were insured'.
+     - Construct SQL Query: `SELECT * FROM athena_db.procedures WHERE insurance = 'yes';`
+   - Execution and Response: Execute the query and return the result, such as "The procedures that were insured are General Consultation"
 ```
 
+
+![agent instruction](Streamlit_App/images/agent_instruction.png)
+
 - Scroll to the top, then select ***Save***.
+
 
 - Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
@@ -400,7 +420,14 @@ You are a SQL developer that creates queries for Amazon Athena. You are allowed 
 }
 ```
 
-- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll down to advanced prompts, then select `Edit`.
+![ag create gif](Streamlit_App/images/action_group_creation.gif)
+
+
+
+- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll to the bottom and int he advanced prompts section, select `Edit`.
+
+![ad prompt btn](Streamlit_App/images/advance_prompt_btn.png)
+
 
 - In the `Advanced prompts`, navigate to the **Orchestration** tab. Enable the `Override orchestration template defaults` option. Also, make sure that `Activate orchestration template` is enabled. 
 
@@ -456,6 +483,8 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 </athena_examples>
 ```
 
+![adv prompt create gif](Streamlit_App/images/adv_prompt_creation.gif)
+
 
 - This prompt helps provide the agent an example of the table schema(s) used for the database, along with an example of how the Amazon Athena query should be formatted. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
 
@@ -476,7 +505,7 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 ## Step 7: Testing the Setup
 
 ### Testing the Bedrock Agent
-- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Make sure to **Prepare** the agent so that the changes made can update. You will be able to enter prompts in the user interface to test your Bedrock agent.
+- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Select ***Edit in Agent Builder***, and make sure to **Prepare** the agent so that the changes made can update. After, ***Save and exit***. On the right, you will be able to enter prompts in the user interface to test your Bedrock agent.`(You may be prompt to prepare the agent once more before testing the latest chages form the AWS console)` 
 
 
 ![Agent test](Streamlit_App/images/agent_test.png)
@@ -484,9 +513,9 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 
 - Example prompts for Action Groups:
 
-    1. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
+    1. Show me all of the procedures in the imaging category that are insured. Show me the query you created to fetch the data too.
 
-    2. Fetch me data by creating an athena query that provides me details on all customers who are vip, and have a balance over 300.
+    2. Show me all of the customers that are vip, and have a balance over 200 dollars.
 
 
 
