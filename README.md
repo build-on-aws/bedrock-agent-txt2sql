@@ -264,9 +264,19 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Enter `arn:aws:bedrock:us-west-2:{aws-account-id}:agent/* `. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. Lastly, for the Action, select `lambda:InvokeAction`, then ***Save***.
+- Here is an example of the resource policy. At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/*` for now. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. 
+
+Please use the following settings below:
+
+* ***Service*** - `Other`
+* ***Statement ID*** - `allow-bedrock-service`
+* ***Principal*** - `bedrock.amazonaws.com`
+* ***Source ARN*** - `arn:aws:bedrock:us-west-2:{account-id}:agent/*`
+* ***Action*** - `lambda:InvokeFunction`
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
+
+- Once your configurations look similar to the above screenshot, select ***Save*** at the bottom.
 
 - We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
 
