@@ -136,6 +136,9 @@ for chat in reversed(st.session_state['history']):
 # Example Prompts Section
 
 
+# Increase the maximum width of the text in each cell of the dataframe
+pd.set_option('display.max_colwidth', None)
+
 # Define the queries and their descriptions
 query_data = {
     "Test Prompts": [
@@ -153,4 +156,4 @@ queries_df = pd.DataFrame(query_data)
 
 # Display the DataFrame in Streamlit
 st.write("## Test Action Group - Athena Queries")
-st.dataframe(queries_df)
+st.dataframe(queries_df, width=900)  # Adjust the width to fit your layout
