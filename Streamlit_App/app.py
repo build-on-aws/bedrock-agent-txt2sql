@@ -155,5 +155,5 @@ query_data = {
 queries_df = pd.DataFrame(query_data)
 
 # Display the DataFrame in Streamlit
-st.write("## Test Action Group - Athena Queries")
+st.write("## Test Prompts for Amazon Athena")
 st.dataframe(queries_df, width=900)  # Adjust the width to fit your layout
