@@ -65,7 +65,6 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
 
-- Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command in ther terminal or command prompt:
 
 For **Mac**
 ```linux
