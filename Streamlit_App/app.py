@@ -136,19 +136,21 @@ for chat in reversed(st.session_state['history']):
 # Example Prompts Section
 
 
+# Define the queries and their descriptions
+query_data = {
+    "Test Action": [
+        "Show me all procedures in the imaging category that are insured. Also, show me the the Athena query created.",
+        "Return to me the number of procedures that are in the laboratory category. Also return the created query.",
+        "Fetch me the number of procedures that are either in the laboratory, imaging, or surgery category, and insured.",
+        "Return me information on all customers who have a past due amount over 70.",
+        "Provide me details on all customers who are VIP, and have a balance over 300.",
+        "Fetch me data of all procedures that were not insured, with customer names, and provide the Athena query created. (This query will be a JOIN. You may see duplicates because Amazon Athena is not integrity constraint bound.)"
+    ]
+}
+
+# Create DataFrame
+queries_df = pd.DataFrame(query_data)
+
+# Display the DataFrame in Streamlit
 st.write("## Test Action Group - Athena Queries")
-st.markdown("""
-
-    a. Show me all procedures in the imaging category that are insured. Also, show me the the athena query created.
-
-    b. Return to me the number of procedures that are in the laboratory category. Also return the created query.
-
-    c. Fetch me the number of procedures that are either in the laboratory, imaging or surgery category, and insured.
-
-    d. Return me information on all customers who have a past due amount over 70.
-            
-    e. Provide me details on all customser who are vip, and have a balance over 300.
-
-    f. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN. You may see duplicates becuase Amazon Athena is not integrity constraint bound.)
-
-""")
+st.dataframe(queries_df)
