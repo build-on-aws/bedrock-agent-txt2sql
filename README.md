@@ -2,12 +2,12 @@
 # Setup Amazon Bedrock Agent for Text2SQL Using Amazon Athena with Streamlit
 
 ## Introduction
-We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL datastores.
+We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases.
 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access will need to be granted to the **Amazon Titan Embeddings G1 - Text** model, and **Anthropic Claude Instant** model from the Amazon Bedrock console.
+- Access will need to be granted to the **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -22,7 +22,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox for the base model columns **Amazon: Titan Embeddings G1 - Text** and **Anthropic: Claude Instant**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
+- Select the checkbox for the base model column **Anthropic: Claude 3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
@@ -64,20 +64,6 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/s
 
 
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
-
-- Also, we will add the API schema for the Lambda function to this S3 bucket. Download the schema file from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json) by using the following `curl` command in ther terminal or command prompt:
-
-For **Mac**
-```linux
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output ~/Documents/athena-schema.json
-```
-
-For **Windows**
-```Windows
-curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/schema/athena-schema.json --output %USERPROFILE%\Documents\athena-schema.json
-```
-
-- Then, upload this file to S3 bucket `athena-destination-store-{alias}`. We will use this S3 bucket to store the schema to help reserve on resources. 
 
 
 ### Step 3: Setup  Amazon Athena
@@ -278,7 +264,7 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID` for now. We will include the ARN once it’s generated in step 6 after creating the Bedrock agent alias):
+- Enter `arn:aws:bedrock:us-west-2:{aws-account-id}:agent/* `. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. Lastly, for the Action, select `lambda:InvokeAction`, then ***Save***.
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
@@ -286,7 +272,7 @@ def lambda_handler(event, context):
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
-- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies ***AmazonAthenaFullAccess***,  ***AmazonS3FullAccess***, and ***KMSFullPolicy*** by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
+- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies ***AmazonAthenaFullAccess***,  and ***AmazonS3FullAccess*** by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
 
@@ -306,47 +292,150 @@ def lambda_handler(event, context):
 
 
 
-### Step 5: Setup Bedrock Agent and Action Group 
-- Navigate to the Bedrock console, go to the toggle on the left, and under **Orchestration** select **Agents**, then select **Create Agent**.
+### Step 5: Setup Bedrock agent and action group 
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select ***Agents***, then ***Create Agent***. Provide an agent name, like `athena-agent` then ***Create***.
 
-![Orchestration2](Streamlit_App/images/orchestration2.png)
+![agent create](Streamlit_App/images/agent_create.png)
 
-- On the next screen, provide an agent name, like “SQL-Agent”. Leave the other options as default, then select **Next**
+- The agent description is optional, and use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
 
-![Agent details](Streamlit_App/images/agent_details.png)
 
-![Agent details 2](Streamlit_App/images/agent_details_2.png)
+```instruction
+Role: You are a SQL developer creating queries for Amazon Athena.
 
-- Select the **Anthropic: Claude Instant V1 model**. Next, we add instructions by creating a prompt that defines the rules of operation for the agent such as querying Athena and providing data. In the prompt below, we give specific direction on how the model should answer questions. Copy, then paste the details below into the agent instructions. 
+Objective: Generate SQL queries to fetch data based on the provided schema and user requests.
 
-```text
-You are a SQL developer that creates queries for Amazon Athena. You are allowed to return data and Amazon Athena queries when requested. You will use the schema tables provided here {athena_schema} to create queries for the Athena database like {athena_example}. Return responses exactly how they are fetched. Be friendly in every response.
+1. Query Decomposition and Understanding:
+   - Analyze the user’s request to understand the main objective.
+   - Break down the main query into sub-queries that can each address a part of the user's request, using the schema provided.
+
+2. SQL Query Creation:
+   - For each sub-query, use the relevant tables and fields from the provided schema.
+   - Construct SQL queries that are precise and tailored to retrieve the exact data required by the user’s request.
+
+3. Query Execution and Response:
+   - Execute the constructed SQL queries against the Amazon Athena database.
+   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy.
+   - Maintain a friendly and professional tone in all communications.
+
+4. Continuous Interaction:
+   - Keep track of the user’s session to better understand the context of subsequent queries.
+   - Adjust queries based on user feedback or additional data requirements that emerge during the session.
+
+Example:
+   - User Request: Provide me all the procedures that were insured.
+   - SQL Query Generation:
+     - Analyze the request: Identify key terms like 'all the procedures' and 'that were insured'.
+     - Construct SQL Query: `SELECT * FROM athena_db.procedures WHERE insurance = 'yes';`
+   - Execution and Response: Execute the query and return the result, such as "The procedures that were insured are General Consultation"
 ```
 
+It should look similar to the following: 
 
-![Model select2](Streamlit_App/images/select_model.png)
+![agent instruction](Streamlit_App/images/agent_instruction.png)
 
-- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Then, select the API schema `athena-schema.json` from S3 bucket `athena-destination-store-{alias}`. 
+- Scroll to the top, then select ***Save***.
 
-![Add action group](Streamlit_App/images/action_group_add.png)
-
-- Select **Next**, then **Next** again, as we are not associating a knowledge base. Then create the Agent
-
-![Create agent](Streamlit_App/images/create_agent.png)
+- Keep in mind that these instructions guide the generative AI application in its role as a SQL developer creating efficient and accurate queries for Amazon Athena. The process involves understanding user requests, decomposing them into manageable sub-queries, and executing these to fetch precise data. This structured approach ensures that responses are not only accurate but also relevant to the user's needs, thereby enhancing user interaction and data retrieval efficiency.
 
 
-- Now, we need to provide the Bedrock agent the table schemas for Amazon Athena in order to build the queries. On the Agent Overview screen, scroll down and select **Working draft**
+- Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
-![Working draft](Streamlit_App/images/working_draft.png)
+- Call the action group `query-athena`. We will keep `Action group type` set to ***Define with API schemas***. `Action group invocations` should be set to ***select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
+
+- For the `Action group Schema`, we will choose ***Define with in-line OpenAPI schema editor***. Replace the default schema in the **In-line OpenAPI schema** editor with the schema provided below. You can also retrieve the schema from the repo [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json). After, select ***Add***.
+`(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
+
+```schema
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "AthenaQuery API",
+    "description": "API for querying data from an Athena database",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/athenaQuery": {
+      "post": {
+        "description": "Execute a query on an Athena database",
+        "requestBody": {
+          "description": "Athena query details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Procedure ID": {
+                    "type": "string",
+                    "description": "Unique identifier for the procedure",
+                    "nullable": true
+                  },
+                  "Query": {
+                    "type": "string",
+                    "description": "SQL Query"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ResultSet": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "A single row of query results"
+                      },
+                      "description": "Results returned by the query"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+It should look like the following:
+
+![ag create gif](Streamlit_App/images/action_group_creation.gif)
 
 
-- Go down to **Advanced prompts** and select **Edit**
 
-![advanced prompt btn](Streamlit_App/images/advance_prompt_btn.png)
+- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll to the bottom and in the advanced prompts section, select `Edit`.
 
-- Select the **Orchestration** tab. Toggle on the radio button **Override orchestration template defaults**. Make sure **Activate orchestration template** is enabled as well.
+![ad prompt btn](Streamlit_App/images/advance_prompt_btn.png)
 
-- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt:
+
+- In the `Advanced prompts`, navigate to the **Orchestration** tab. Enable the `Override orchestration template defaults` option. Also, make sure that `Activate orchestration template` is enabled. 
+
+- In the `Prompt template editor`, go to line 22-23, then copy/paste the following prompt:
 
 ```sql
 Here are the table schemas for the Amazon Athena database <athena_schemas>. 
@@ -385,7 +474,7 @@ Here are the table schemas for the Amazon Athena database <athena_schemas>.
   </athena_schema>
 </athena_schemas>
 
-Here are examples of Amazon Athena queries <athena_examples>. Double check every query for correct format. You can also provide Amazon Athena queries if requested.
+Here are examples of Amazon Athena queries <athena_examples>.
 
 <athena_examples>
   <athena_example>
@@ -396,25 +485,23 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
     SELECT * FROM athena_db.customers WHERE balance >= 0;
   </athena_example>
 </athena_examples>
-
 ```
 
+![adv prompt create gif](Streamlit_App/images/adv_prompt_creation.gif)
 
-It should look similar to the following:
 
-![Orchestration edit](Streamlit_App/images/orch_edit.gif)
+- This prompt helps provide the agent an example of the table schema(s) used for the database, along with an example of how the Amazon Athena query should be formatted. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
 
--Verify that the **alias** has been updated for both table schemas. Then, scroll to the bottom and select **Save and exit**
+- Scroll to the bottom and select the ***Save and exit***. Then, ***Save and exit*** one more time.
 
-![Save N exit](Streamlit_App/images/saveNexit.png)
 
 
 ### Step 6: Create an alias
-- Create an alias (new version), and choose a name of your liking. Make sure to copy and save your **AliasID**. You will need these in step 9.
+- While query-agent is still selected, scroll down to the Alias secion and select ***Create***. Choose a name of your liking. Make sure to copy and save your **AliasID**. You will need this in step 9.
  
 ![Create alias](Streamlit_App/images/create_alias.png)
 
-- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Copy the Agent ARN, then add this ARN to the resource policy for Lambda function `bedrock-agent-txtsql-action` that was previously created in step 3. (Make sure to also save the **AgentID** at this step. It will be needed in step 9.)
+- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Save the **AgentID** because you will also need this in step 9.
 
 ![Agent ARN2](Streamlit_App/images/agent_arn2.png)
 
@@ -422,7 +509,7 @@ It should look similar to the following:
 ## Step 7: Testing the Setup
 
 ### Testing the Bedrock Agent
-- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Make sure to **Prepare** the agent so that the changes made can update. You will be able to enter prompts in the user interface to test your Bedrock agent.
+- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Select ***Edit in Agent Builder***, and make sure to **Prepare** the agent so that the changes made can update. After, ***Save and exit***. On the right, you will be able to enter prompts in the user interface to test your Bedrock agent.`(You may be prompt to prepare the agent once more before testing the latest chages form the AWS console)` 
 
 
 ![Agent test](Streamlit_App/images/agent_test.png)
@@ -430,9 +517,9 @@ It should look similar to the following:
 
 - Example prompts for Action Groups:
 
-    1. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created
+    1. Show me all of the procedures in the imaging category that are insured. Show me the query you created to fetch the data too.
 
-    2. Fetch me data by creating an athena query that provides me details on all customers who are vip, and have a balance over 300.
+    2. Show me all of the customers that are vip, and have a balance over 200 dollars.
 
 
 
@@ -479,8 +566,12 @@ It should look similar to the following:
 ![Update Agent ID and alias](Streamlit_App/images/update_agentId_and_alias.png)
 
 6. **Install Streamlit** (if not already installed):
-   - Run `pip install streamlit`. Additionally, make sure boto3, and pandas dependencies are installed by running `pip install boto3` and `pip install pandas`.
+   - Run the following command to install all of the dependencies needed:
 
+     ```bash
+     pip install streamlit boto3 pandas
+     ```
+     
 7. **Run the Streamlit App**:
    - Execute the command `streamlit run app.py --server.address=0.0.0.0 --server.port=8080`.
    - Streamlit will start the app, and you can view it by selecting "Preview" within the Cloud9 IDE at the top, then **Preview Running Application**
