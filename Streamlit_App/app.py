@@ -144,7 +144,7 @@ query_data = {
         "Fetch me the number of procedures that are either in the laboratory, imaging, or surgery category, and insured.",
         "Return me information on all customers who have a past due amount over 70.",
         "Provide me details on all customers who are VIP, and have a balance over 300.",
-        "Fetch me data of all procedures that were not insured, with customer names, and provide the Athena query created. (This query will be a JOIN. You may see duplicates because Amazon Athena is not integrity constraint bound.)"
+        "Fetch me data of all procedures that were not insured, with customer names, and provide the Athena query created."
     ]
 }
 
