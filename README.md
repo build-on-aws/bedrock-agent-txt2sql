@@ -7,7 +7,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access will need to be granted to the **Anthropic Claude3 Haiku** model from the Amazon Bedrock console.
+- Access will need to be granted to the **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -22,7 +22,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox for the base model column **Anthropic Claude3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
+- Select the checkbox for the base model column **Anthropic: Claude3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
