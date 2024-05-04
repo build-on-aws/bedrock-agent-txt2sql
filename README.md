@@ -7,7 +7,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access will need to be granted to the **Amazon Titan Embeddings G1 - Text** model, and **Anthropic Claude Instant** model from the Amazon Bedrock console.
+- Access will need to be granted to the **Anthropic Claude3 Haiku** model from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -22,7 +22,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox for the base model columns **Amazon: Titan Embeddings G1 - Text** and **Anthropic: Claude Instant**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
+- Select the checkbox for the base model column **Anthropic Claude3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
@@ -306,47 +306,228 @@ def lambda_handler(event, context):
 
 
 
-### Step 5: Setup Bedrock Agent and Action Group 
-- Navigate to the Bedrock console, go to the toggle on the left, and under **Orchestration** select **Agents**, then select **Create Agent**.
 
-![Orchestration2](Streamlit_App/images/orchestration2.png)
+### Step 5: Setup Bedrock agent and action group 
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`. Provide an agent name, like **multi-model-agent** then create the agent.
 
-- On the next screen, provide an agent name, like “SQL-Agent”. Leave the other options as default, then select **Next**
+- The agent description is optional, and we will use the default new service role. For the model, select **Anthropic Claude V2.1**. Next, provide the following instruction for the agent:
 
-![Agent details](Streamlit_App/images/agent_details.png)
+```instruction
+You are an research agent that interacts with various models to do tasks and return information. You use the model ID and prompt from the request, then use your available tools to call models. You use these models for text/code generation, summarization, problem solving, text-to-sql, response comparisons and ratings. You also allow models to do image-to-text. Models can also do text-to-image, while returning a url similar to this example {url_example}. You are only allowed to retrieve information the way I ask. Do not decide when to provide your own response, unless you ask. Return every response in clean format.
+```
 
-![Agent details 2](Streamlit_App/images/agent_details_2.png)
+- Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
-- Select the **Anthropic: Claude Instant V1 model**. Next, we add instructions by creating a prompt that defines the rules of operation for the agent such as querying Athena and providing data. In the prompt below, we give specific direction on how the model should answer questions. Copy, then paste the details below into the agent instructions. 
+- Call the action group `call-model`. For the Lambda function, we select `bedrock-agent-model-call`.
 
-```text
-You are a SQL developer that creates queries for Amazon Athena. You are allowed to return data and Amazon Athena queries when requested. You will use the schema tables provided here {athena_schema} to create queries for the Athena database like {athena_example}. Return responses exactly how they are fetched. Be friendly in every response.
+- For the API Schema, we will choose `Define with in-line OpenAPI schema editor`. Copy & paste the schema from below into the **In-line OpenAPI schema** editor, then select ***Add***:
+`(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
+
+```schema
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Model Inference API",
+    "description": "API for inferring a model with a prompt, and model ID.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/callModel": {
+      "post": {
+        "description": "Call a model with a prompt, model ID, and an optional image",
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "query",
+            "description": "The ID of the model to call",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "prompt",
+            "in": "query",
+            "description": "The prompt to provide to the model",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "modelId": {
+                    "type": "string",
+                    "description": "The ID of the model to call"
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "description": "The prompt to provide to the model"
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "An optional image to provide to the model"
+                  }
+                },
+                "required": ["modelId", "prompt"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "description": "The result of calling the model with the provided prompt and optional image"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 ```
 
 
-![Model select2](Streamlit_App/images/select_model.png)
+- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll down to advanced prompts, then select `Edit`.
 
-- When creating the action group, call it `query-athena`. Select Lambda function `bedrock-agent-txtsql-action`. Then, select the API schema `athena-schema.json` from S3 bucket `athena-destination-store-{alias}`. 
+- In the `Advanced prompts` box under `Pre-processing template`, enable the `Override pre-processing template defaults` option. Also, make sure that `Activate pre-processing template` is disabled. This is so that we will bypass the possibility of deny responses. We are choosing this option for simplicity. Ideally, you would modify these prompts to allow only what is required. 
 
-![Add action group](Streamlit_App/images/action_group_add.png)
+- In the `Prompt template editor`, go to line 19 or 20 and Copy & paste the following prompt:
 
-- Select **Next**, then **Next** again, as we are not associating a knowledge base. Then create the Agent
+```prompt
+Here is an example of what a url response to access an image should look like:
+<url_example>
+  URL Generated to access the image:
+  
+  https://bedrock-agent-images.s3.amazonaws.com/generated_pic.png?AWSAccessKeyId=123xyz&Signature=rlF0gN%2BuaTHzuEDfELz8GOwJacA%3D&x-amz-security-token=IQoJb3JpZ2luX2VjENH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDhxW1co7u3v0O5rt59gRQ6VzD2QEuDHuNExjM5IMnrbAIhANlEfIUbJYOakD40l7T%2F36oxQ6TsHBYJiNMOJVqRKUvhKo8DCPr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQARoMMDcxMDQwMjI3NTk1IgwzlaJstrewYckoQ48q4wLgSb%2BFWzU7DoeopqbophcBtyQVXc4g89lT6durG8qVDKZFPEHHPHAq8br7tmMAywipKvq5rqY8Oo2idUJbAg62FWKVRzT%2FF1UXRmsqKr6cs7spmIIbIkpyi3UXUhyK%2FP%2BhZyUJ%2BCVQTvn2DImBxIRAd7s2h7QzDbN46hyizdQA%2FKlfnURokd3nCZ2svArRjqyr0Zvm%2BCiJVRXjxAKrkNRNFCuaKDVPkC%2F7BWd3AO3WlXPtJZxUriP28uqDNuNsOBU5GMhivUv%2BTzzZdlDlgaSowxZDeWXZyoFs4r4CUW0jMUzdJjOKKTghfOukbguz8voah16ZSI22vbLMruUboBc3TTNRG145hKcGLcuFNywjt2r8fLyxywl8GteCHxuHC667P40U2bOkqSDVzBE4sLQyXJuT%2BaxyLkSsjIEDWV0bdtQeBkptjT3zC8NrcFRx0vyOnWY7aHA0zt1jw%2BfCbdKmijSfMOqo0rAGOp0B098Yen25a84pGd7pBJUkyDa0OWUBgBTuMoDetv%2FfKjstwWuYm1I%2BzSi8vb5HWXG1OO7XLs5QKsP4L6dEnbpq9xBj9%2FPlwv2YcYwJZ6CdNWIr7umFM05%2FB5%2FI3epwN3ZmgJnFxCUngJtt1TZBr%2B7GOftb3LYzU67gd2YMiwlBJ%2BV1k6jksFuIRcQ%2FzsvDvt0QUSyl7xgp8yldZJu5Jg%3D%3D&Expires=1712628409
+</url_example>
+```
 
-![Create agent](Streamlit_App/images/create_agent.png)
+
+- This prompt helps provide the agent an example on formatting the response of a presigned url when images are generated. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
+
+- Scroll to the bottom and select the `Save and exit` button.
 
 
-- Now, we need to provide the Bedrock agent the table schemas for Amazon Athena in order to build the queries. On the Agent Overview screen, scroll down and select **Working draft**
+### Step 5: Setup Bedrock agent and action group 
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`. Provide an agent name, like **sql-agent** then create the agent.
 
-![Working draft](Streamlit_App/images/working_draft.png)
+- The agent description is optional, and we will use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
+
+```instruction
+You are a SQL developer that creates queries for Amazon Athena. You are allowed to return data and Amazon Athena queries when requested. You will use the schema tables provided here {athena_schema} to create queries for the Athena database like {athena_example}. Return responses exactly how they are fetched. Be friendly in every response.
+```
+
+- Scroll to the top, then select ***Save***.
+
+- Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
+
+- Call the action group `query-athena`. For the Lambda function, we select `bedrock-agent-txtsql-action`.
+
+- For the API Schema, we will choose `Define with in-line OpenAPI schema editor`. Copy & paste the schema from below into the **In-line OpenAPI schema** editor, then select ***Add***:
+`(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
+
+```schema
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "AthenaQuery API",
+    "description": "API for querying data from an Athena database",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/athenaQuery": {
+      "post": {
+        "description": "Execute a query on an Athena database",
+        "requestBody": {
+          "description": "Athena query details",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "Procedure ID": {
+                    "type": "string",
+                    "description": "Unique identifier for the procedure",
+                    "nullable": true
+                  },
+                  "Query": {
+                    "type": "string",
+                    "description": "SQL Query"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with query results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ResultSet": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "A single row of query results"
+                      },
+                      "description": "Results returned by the query"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 
-- Go down to **Advanced prompts** and select **Edit**
+- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll down to advanced prompts, then select `Edit`.
 
-![advanced prompt btn](Streamlit_App/images/advance_prompt_btn.png)
+- In the `Advanced prompts` box under `Pre-processing template`, enable the `Override pre-processing template defaults` option. Also, make sure that `Activate pre-processing template` is disabled. This is so that we will bypass the possibility of deny responses. We are choosing this option for simplicity. Ideally, you would modify these prompts to allow only what is required. 
 
-- Select the **Orchestration** tab. Toggle on the radio button **Override orchestration template defaults**. Make sure **Activate orchestration template** is enabled as well.
-
-- In the **Prompt template editor**, scroll down to line seven right below the closing tag `</auxiliary_instructions>`. Make two line spaces, then copy/paste in the following table schemas and query examples within the prompt:
+- In the `Prompt template editor`, go to line 22-23, then copy/paste the following prompt:
 
 ```sql
 Here are the table schemas for the Amazon Athena database <athena_schemas>. 
@@ -396,17 +577,13 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
     SELECT * FROM athena_db.customers WHERE balance >= 0;
   </athena_example>
 </athena_examples>
-
 ```
 
 
-It should look similar to the following:
+- This prompt helps provide the agent an example of the table schema(s) used for the database, along with an example of how the Amazon Athena query should be formatted. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
 
-![Orchestration edit](Streamlit_App/images/orch_edit.gif)
+- Scroll to the bottom and select the `Save and exit` button.
 
--Verify that the **alias** has been updated for both table schemas. Then, scroll to the bottom and select **Save and exit**
-
-![Save N exit](Streamlit_App/images/saveNexit.png)
 
 
 ### Step 6: Create an alias
