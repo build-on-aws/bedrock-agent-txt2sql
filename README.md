@@ -2,7 +2,7 @@
 # Setup Amazon Bedrock Agent for Text2SQL Using Amazon Athena with Streamlit
 
 ## Introduction
-We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL datastores.
+We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases.
 
 ## Prerequisites
 - An active AWS Account.
@@ -22,7 +22,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 ![Model access](Streamlit_App/images/model_access.png)
 
-- Select the checkbox for the base model column **Anthropic: Claude3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
+- Select the checkbox for the base model column **Anthropic: Claude 3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
@@ -293,11 +293,11 @@ def lambda_handler(event, context):
 
 
 ### Step 5: Setup Bedrock agent and action group 
-- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`, then ***Create Agent***. Provide an agent name, like `athena-agent` then ***Create***.
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select ***Agents***, then ***Create Agent***. Provide an agent name, like `athena-agent` then ***Create***.
 
-![agent create](Streamlit_App/images/lagent_create.png)
+![agent create](Streamlit_App/images/agent_create.png)
 
-- The agent description is optional. We will use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
+- The agent description is optional, and use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
 
 
 ```instruction
@@ -330,10 +330,13 @@ Example:
    - Execution and Response: Execute the query and return the result, such as "The procedures that were insured are General Consultation"
 ```
 
+It should look similar to the following: 
 
 ![agent instruction](Streamlit_App/images/agent_instruction.png)
 
 - Scroll to the top, then select ***Save***.
+
+- These instructions guide the generative AI application in its role as a SQL developer creating efficient and accurate queries for Amazon Athena. The process involves understanding user requests, decomposing them into manageable sub-queries, and executing these to fetch precise data. This structured approach ensures that responses are not only accurate but also relevant to the user's needs, thereby enhancing user interaction and data retrieval efficiency.
 
 
 - Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
@@ -419,6 +422,7 @@ Example:
   }
 }
 ```
+It should look like the following:
 
 ![ag create gif](Streamlit_App/images/action_group_creation.gif)
 
