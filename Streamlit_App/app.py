@@ -33,13 +33,7 @@ end_session_button = st.button("End Session")
 st.sidebar.title("Trace Data")
 
 
-def filter_trace_data(trace_data, query):
-    if query:
-        # Filter lines that contain the query
-        return "\n".join([line for line in trace_data.split('\n') if query.lower() in line.lower()])
-    return trace_data
-    
-    
+
 
 # Session State Management
 if 'history' not in st.session_state:
@@ -64,7 +58,7 @@ def format_response(response_body):
 # Handling user input and responses
 if submit_button and prompt:
     event = {
-        "sessionId": "MYSESSION10",
+        "sessionId": "MYSESSION2",
         "question": prompt
     }
     response = agenthelper.lambda_handler(event, None)
@@ -99,7 +93,7 @@ if submit_button and prompt:
 if end_session_button:
     st.session_state['history'].append({"question": "Session Ended", "answer": "Thank you for using AnyCompany Support Agent!"})
     event = {
-        "sessionId": "MYSESSION10",
+        "sessionId": "MYSESSION2",
         "question": "placeholder to end session",
         "endSession": True
     }
@@ -144,15 +138,17 @@ for chat in reversed(st.session_state['history']):
 
 st.write("## Test Action Group - Athena Queries")
 st.markdown("""
-    a. Fetch me data by creating a query to return all procedures in the imaging category and are insured. Include all the details, along with the athena query created.
 
-    b. Fetch me data by creating an athena query to return the number of procedures that are in the laboratory category. Also return the created query.
+    a. Show me all procedures in the imaging category that are insured. Also, show me the the athena query created.
 
-    c. Fetch me data by creating an athena query that returns the number of procedures that are either in the laboratory, imaging or surgery category, and insured.
+    b. Return to me the number of procedures that are in the laboratory category. Also return the created query.
 
-    d. Fetch me data by creating an athena query that returns me information on all customers who have a past due amount over 70.
+    c. Fetch me the number of procedures that are either in the laboratory, imaging or surgery category, and insured.
+
+    d. Return me information on all customers who have a past due amount over 70.
             
-    e. Fetch me data by creating an athena query that provides me details on all customser who are vip, and have a balance over 300.
+    e. Provide me details on all customser who are vip, and have a balance over 300.
 
-    f. Fetch me data by creating an athena query that fetches me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN. You may see duplicates becuase Amazon Athena is not integrity constraint bound.)
+    f. Fetch me data of all procedures that were not insured, with customer names, and provide the athena query created. (This query will be a JOIN. You may see duplicates becuase Amazon Athena is not integrity constraint bound.)
+
 """)
