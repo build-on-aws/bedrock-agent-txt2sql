@@ -278,7 +278,7 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Here is an example of the resource policy. (At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/BedrockAgentID` for now. We will include the ARN once it’s generated in step 6 after creating the Bedrock agent alias):
+- Enter `arn:aws:bedrock:us-west-2:{aws-account-id}:agent/* `. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. Lastly, for the Action, select `lambda:InvokeAction`, then ***Save***.
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
@@ -286,7 +286,7 @@ def lambda_handler(event, context):
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
-- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies ***AmazonAthenaFullAccess***,  ***AmazonS3FullAccess***, and ***KMSFullPolicy*** by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
+- Select `Add permissions -> Attach policies`. Then, attach the AWS managed policies ***AmazonAthenaFullAccess***,  and ***AmazonS3FullAccess*** by selecting, then adding the permissions. Please note, in a real world environment, it's recommended that you practice least privilage.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
 
@@ -307,7 +307,7 @@ def lambda_handler(event, context):
 
 
 ### Step 5: Setup Bedrock agent and action group 
-- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`. Provide an agent name, like **sql-agent** then create the agent.
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select `Agents`. Provide an agent name, like **athena-agent** then create the agent.
 
 - The agent description is optional, and we will use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
 
@@ -319,9 +319,9 @@ You are a SQL developer that creates queries for Amazon Athena. You are allowed 
 
 - Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
-- Call the action group `query-athena`. For the Lambda function, we select `bedrock-agent-txtsql-action`.
+- Call the action group `query-athena`. We will keep `Action group type` set to ***Define with API schemas***. `Actoin group invocations` should be set to ***select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
 
-- For the API Schema, we will choose `Define with in-line OpenAPI schema editor`. Copy & paste the schema from below into the **In-line OpenAPI schema** editor, then select ***Add***:
+- For the `Action group Schema`, we will choose ***Define with in-line OpenAPI schema editor***. Replace the default schema in the **In-line OpenAPI schema** editor with the schema provided below. You can also retrive the schema from the repo [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json). After, select ***Add***:
 `(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
 
 ```schema
@@ -401,10 +401,9 @@ You are a SQL developer that creates queries for Amazon Athena. You are allowed 
 }
 ```
 
-
 - Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll down to advanced prompts, then select `Edit`.
 
-- In the `Advanced prompts` box under `Pre-processing template`, enable the `Override pre-processing template defaults` option. Also, make sure that `Activate pre-processing template` is disabled. This is so that we will bypass the possibility of deny responses. We are choosing this option for simplicity. Ideally, you would modify these prompts to allow only what is required. 
+- In the `Advanced prompts`, navigate to the **Orchestration** tab. Enable the `Override orchestration template defaults` option. Also, make sure that `Activate orchestration template` is enabled. 
 
 - In the `Prompt template editor`, go to line 22-23, then copy/paste the following prompt:
 
@@ -461,16 +460,16 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 
 - This prompt helps provide the agent an example of the table schema(s) used for the database, along with an example of how the Amazon Athena query should be formatted. Additionally, there is an option to use a [custom parser Lambda function](https://docs.aws.amazon.com/bedrock/latest/userguide/lambda-parser.html) for more granular formatting. 
 
-- Scroll to the bottom and select the ***Save and exit***.
+- Scroll to the bottom and select the ***Save and exit***. Then, ***Save and exit*** one more time.
 
 
 
 ### Step 6: Create an alias
-- Create an alias (new version), and choose a name of your liking. Make sure to copy and save your **AliasID**. You will need these in step 9.
+- While query-agent is still selected, scroll down to the Alias secion and select ***Create***. Choose a name of your liking. Make sure to copy and save your **AliasID**. You will need this in step 9.
  
 ![Create alias](Streamlit_App/images/create_alias.png)
 
-- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Copy the Agent ARN, then add this ARN to the resource policy for Lambda function `bedrock-agent-txtsql-action` that was previously created in step 3. (Make sure to also save the **AgentID** at this step. It will be needed in step 9.)
+- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Save the **AgentID** because you will also need this in step 9.
 
 ![Agent ARN2](Streamlit_App/images/agent_arn2.png)
 
