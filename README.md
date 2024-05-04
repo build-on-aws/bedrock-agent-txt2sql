@@ -422,7 +422,9 @@ It should look similar to the following:
   }
 }
 ```
-It should look like the following:
+
+Your configuration should look like the following:
+
 
 ![ag create gif](Streamlit_App/images/action_group_creation.gif)
 
