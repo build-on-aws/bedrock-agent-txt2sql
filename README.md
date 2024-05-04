@@ -336,14 +336,14 @@ It should look similar to the following:
 
 - Scroll to the top, then select ***Save***.
 
-`Keep in mind that these instructions guide the generative AI application in its role as a SQL developer creating efficient and accurate queries for Amazon Athena. The process involves understanding user requests, decomposing them into manageable sub-queries, and executing these to fetch precise data. This structured approach ensures that responses are not only accurate but also relevant to the user's needs, thereby enhancing user interaction and data retrieval efficiency.`
+- Keep in mind that these instructions guide the generative AI application in its role as a SQL developer creating efficient and accurate queries for Amazon Athena. The process involves understanding user requests, decomposing them into manageable sub-queries, and executing these to fetch precise data. This structured approach ensures that responses are not only accurate but also relevant to the user's needs, thereby enhancing user interaction and data retrieval efficiency.
 
 
 - Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
-- Call the action group `query-athena`. We will keep `Action group type` set to ***Define with API schemas***. `Actoin group invocations` should be set to ***select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
+- Call the action group `query-athena`. We will keep `Action group type` set to ***Define with API schemas***. `Action group invocations` should be set to ***select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
 
-- For the `Action group Schema`, we will choose ***Define with in-line OpenAPI schema editor***. Replace the default schema in the **In-line OpenAPI schema** editor with the schema provided below. You can also retrive the schema from the repo [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json). After, select ***Add***:
+- For the `Action group Schema`, we will choose ***Define with in-line OpenAPI schema editor***. Replace the default schema in the **In-line OpenAPI schema** editor with the schema provided below. You can also retrieve the schema from the repo [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json). After, select ***Add***.
 `(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
 
 ```schema
@@ -428,7 +428,7 @@ It should look like the following:
 
 
 
-- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll to the bottom and int he advanced prompts section, select `Edit`.
+- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll to the bottom and in the advanced prompts section, select `Edit`.
 
 ![ad prompt btn](Streamlit_App/images/advance_prompt_btn.png)
 
@@ -474,7 +474,7 @@ Here are the table schemas for the Amazon Athena database <athena_schemas>.
   </athena_schema>
 </athena_schemas>
 
-Here are examples of Amazon Athena queries <athena_examples>. Double check every query for correct format. You can also provide Amazon Athena queries if requested.
+Here are examples of Amazon Athena queries <athena_examples>.
 
 <athena_examples>
   <athena_example>
@@ -566,8 +566,12 @@ Here are examples of Amazon Athena queries <athena_examples>. Double check every
 ![Update Agent ID and alias](Streamlit_App/images/update_agentId_and_alias.png)
 
 6. **Install Streamlit** (if not already installed):
-   - Run `pip install streamlit`. Additionally, make sure boto3, and pandas dependencies are installed by running `pip install boto3` and `pip install pandas`.
+   - Run the following command to install all of the dependencies needed:
 
+     ```bash
+     pip install streamlit boto3 pandas
+     ```
+     
 7. **Run the Streamlit App**:
    - Execute the command `streamlit run app.py --server.address=0.0.0.0 --server.port=8080`.
    - Streamlit will start the app, and you can view it by selecting "Preview" within the Cloud9 IDE at the top, then **Preview Running Application**
