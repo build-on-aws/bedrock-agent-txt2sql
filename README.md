@@ -264,14 +264,12 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Here is an example of the resource policy. At this part of the setup, we will not have a Bedrock agent Source ARN. So, enter in `arn:aws:bedrock:us-west-2:{accoundID}:agent/*` for now. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. 
-
-Please use the following settings below:
+- Please use the following settings to configure the resource based policy:
 
 * ***Service*** - `Other`
 * ***Statement ID*** - `allow-bedrock-service`
 * ***Principal*** - `bedrock.amazonaws.com`
-* ***Source ARN*** - `arn:aws:bedrock:us-west-2:{account-id}:agent/*`
+* ***Source ARN*** - `arn:aws:bedrock:us-west-2:{account-id}:agent/*` - (Please note, AWS recommends least privilage so only an allowed agent can invoke this Lambda function. A * at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment.)
 * ***Action*** - `lambda:InvokeFunction`
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
