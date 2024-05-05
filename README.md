@@ -32,7 +32,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 
 ### Step 2: Creating S3 Buckets
-- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 24 of the code. 
+- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
 (Make sure to update **{alias}** with the appropriate value throughout the README instructions.)
 
@@ -267,7 +267,7 @@ def lambda_handler(event, context):
 - Please use the following settings to configure the resource based policy:
 
 * ***Service*** - `Other`
-* ***Statement ID*** - `allow-bedrock-service`
+* ***Statement ID*** - `allow-bedrock-agent`
 * ***Principal*** - `bedrock.amazonaws.com`
 * ***Source ARN*** - `arn:aws:bedrock:us-west-2:{account-id}:agent/*` - (Please note, AWS recommends least privilage so only an allowed agent can invoke this Lambda function. A * at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment.)
 * ***Action*** - `lambda:InvokeFunction`
@@ -276,7 +276,7 @@ def lambda_handler(event, context):
 
 - Once your configurations look similar to the above screenshot, select ***Save*** at the bottom.
 
-- We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
+- We will now provide the Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
@@ -430,9 +430,7 @@ It should look similar to the following:
   }
 }
 ```
-
-Your configuration should look like the following:
-
+It should look like the following:
 
 ![ag create gif](Streamlit_App/images/action_group_creation.gif)
 
