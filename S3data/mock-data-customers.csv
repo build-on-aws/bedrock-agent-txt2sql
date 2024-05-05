@@ -1,0 +1,7 @@
+Cust_Id, Customer, Balance, Past_Due, Vip
+001,"John Doe",100,100,"yes"
+002,"Nancy Poo",1000,500,"yes"
+003,"Jane Batsy",350,0,"yes"
+004,"Bob Saggot",200,10,"no"
+005,"John Doe",400,75,"no"
+

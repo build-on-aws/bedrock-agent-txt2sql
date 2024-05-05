@@ -1,0 +1,21 @@
+Procedure_Id,Procedure,Category,Price,Duration(Minutes),Insurance_Covered, Customer_Id
+0001,General Consultation,consultation,100,30,yes,001
+0002,X-Ray,imaging,200,15,no,001
+0003,Blood Test,laboratory,50,10,yes,002
+0004,MRI Scan,imaging,700,45,no,002
+0005,Dental Cleaning,dental,150,60,yes,003
+0006,Orthopedic Surgery,surgery,5000,120,yes,003
+0007,Physiotherapy Session,rehabilitation,120,60,yes,003
+0008,Vaccination,preventative,30,15,yes,004
+0009,Allergy Testing,laboratory,100,20,no,004
+0010,Ultrasound,imaging,300,30,yes,004
+0011,Dental Filling,dental,250,45,yes,004
+0012,Echocardiogram,imaging,400,30,no,005
+0013,Skin Biopsy,laboratory,350,30,yes,005
+0014,Knee Arthroscopy,surgery,3000,90,no,005
+0015,Acupuncture,rehabilitation,100,45,yes,005
+0016,Flu Shot,preventative,25,10,yes,005
+0017,Cholesterol Test,laboratory,45,15,yes,003
+0018,CT Scan,imaging,500,30,no,002
+0019,Root Canal,dental,800,90,yes,005
+0020,Cataract Surgery,surgery,2500,60,yes,002
