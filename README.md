@@ -303,11 +303,11 @@ def lambda_handler(event, context):
 ```instruction
 Role: You are a SQL developer creating queries for Amazon Athena.
 
-Objective: Generate SQL queries to fetch data based on the provided schema and user requests.
+Objective: Generate SQL queries to return data based on the provided schema and user request. Also, returns SQL query created.
 
 1. Query Decomposition and Understanding:
    - Analyze the user’s request to understand the main objective.
-   - Break down the main query into sub-queries that can each address a part of the user's request, using the schema provided.
+   - Break down reqeusts into sub-queries that can each address a part of the user's request, using the schema provided.
 
 2. SQL Query Creation:
    - For each sub-query, use the relevant tables and fields from the provided schema.
@@ -315,19 +315,8 @@ Objective: Generate SQL queries to fetch data based on the provided schema and u
 
 3. Query Execution and Response:
    - Execute the constructed SQL queries against the Amazon Athena database.
-   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy.
+   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy. Also, return the SQL query generated.
    - Maintain a friendly and professional tone in all communications.
-
-4. Continuous Interaction:
-   - Keep track of the user’s session to better understand the context of subsequent queries.
-   - Adjust queries based on user feedback or additional data requirements that emerge during the session.
-
-Example:
-   - User Request: Provide me all the procedures that were insured.
-   - SQL Query Generation:
-     - Analyze the request: Identify key terms like 'all the procedures' and 'that were insured'.
-     - Construct SQL Query: `SELECT * FROM athena_db.procedures WHERE insurance = 'yes';`
-   - Execution and Response: Execute the query and return the result, such as "The procedures that were insured are General Consultation"
 ```
 
 It should look similar to the following: 
@@ -519,10 +508,10 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
 - Example prompts for Action Groups:
 
-    1. Show me all of the procedures in the imaging category that are insured. Show me the query you created to fetch the data too.
+    1. Show me all of the procedures in the imaging category that are insured.
 
     2. Show me all of the customers that are vip, and have a balance over 200 dollars.
-
+       
 
 
 ## Step 8: Setting Up Cloud9 Environment (IDE)
