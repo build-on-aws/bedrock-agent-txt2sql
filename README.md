@@ -315,8 +315,7 @@ Objective: Generate SQL queries to return data based on the provided schema and 
 
 3. Query Execution and Response:
    - Execute the constructed SQL queries against the Amazon Athena database.
-   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy. Also, return the SQL query generated.
-   - Maintain a friendly and professional tone in all communications.
+   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy. Include the query generated and results in the response.
 ```
 
 It should look similar to the following: 
