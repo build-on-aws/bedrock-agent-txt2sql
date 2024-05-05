@@ -32,7 +32,7 @@ We will setup an Amazon Bedrock agent with an action group that will be able to 
 
 
 ### Step 2: Creating S3 Buckets
-- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 22 of the code. 
+- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 24 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
 (Make sure to update **{alias}** with the appropriate value throughout the README instructions.)
 
@@ -264,19 +264,11 @@ def lambda_handler(event, context):
 
 ![Lambda resource policy create](Streamlit_App/images/lambda_resource_policy_create.png)
 
-- Please use the following settings to configure the resource based policy:
-
-* ***Service*** - `Other`
-* ***Statement ID*** - `allow-bedrock-agent`
-* ***Principal*** - `bedrock.amazonaws.com`
-* ***Source ARN*** - `arn:aws:bedrock:us-west-2:{account-id}:agent/*` - (Please note, AWS recommends least privilage so only an allowed agent can invoke this Lambda function. A * at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment.)
-* ***Action*** - `lambda:InvokeFunction`
+- Enter `arn:aws:bedrock:us-west-2:{aws-account-id}:agent/* `. ***Please note, AWS recommends least privilage so only the allowed agent can invoke this Lambda function***. A `*` at the end of the ARN grants any agent in the account access to invoke this Lambda. Ideally, we would not use this in a production environment. Lastly, for the Action, select `lambda:InvokeAction`, then ***Save***.
 
 ![Lambda resource policy](Streamlit_App/images/lambda_resource_policy.png)
 
-- Once your configurations look similar to the above screenshot, select ***Save*** at the bottom.
-
-- We will now provide the Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
+- We also need to provide this Lambda function permissions to interact with an S3 bucket, and Amazon Athena service. While on the `Configuration` tab -> `Permissions` section, select the Role name:
 
 ![Lambda role name 1](Streamlit_App/images/lambda_role1.png)
 
@@ -284,7 +276,7 @@ def lambda_handler(event, context):
 
 ![Lambda role name 2](Streamlit_App/images/lambda_role2.png)
 
-- The last thing we need to do with the Lambda is update the configurations. Navigate to the `Configuration` tab, then `General Configuration` section on the left. From here select ***Edit***.
+- The last thing we need to do with the Lambda is update the configurations. Navigate to the `Configuration` tab, then `General Configuration` section on the left. From here select Edit.
 
 ![Lambda role name 2](Streamlit_App/images/lambda_config1.png)
 
@@ -311,11 +303,11 @@ def lambda_handler(event, context):
 ```instruction
 Role: You are a SQL developer creating queries for Amazon Athena.
 
-Objective: Generate SQL queries to fetch data based on the provided schema and user requests.
+Objective: Generate SQL queries to return data based on the provided schema and user request. Also, returns SQL query created.
 
 1. Query Decomposition and Understanding:
    - Analyze the user’s request to understand the main objective.
-   - Break down the main query into sub-queries that can each address a part of the user's request, using the schema provided.
+   - Break down reqeusts into sub-queries that can each address a part of the user's request, using the schema provided.
 
 2. SQL Query Creation:
    - For each sub-query, use the relevant tables and fields from the provided schema.
@@ -323,19 +315,7 @@ Objective: Generate SQL queries to fetch data based on the provided schema and u
 
 3. Query Execution and Response:
    - Execute the constructed SQL queries against the Amazon Athena database.
-   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy.
-   - Maintain a friendly and professional tone in all communications.
-
-4. Continuous Interaction:
-   - Keep track of the user’s session to better understand the context of subsequent queries.
-   - Adjust queries based on user feedback or additional data requirements that emerge during the session.
-
-Example:
-   - User Request: Provide me all the procedures that were insured.
-   - SQL Query Generation:
-     - Analyze the request: Identify key terms like 'all the procedures' and 'that were insured'.
-     - Construct SQL Query: `SELECT * FROM athena_db.procedures WHERE insurance = 'yes';`
-   - Execution and Response: Execute the query and return the result, such as "The procedures that were insured are General Consultation"
+   - Return the results exactly as they are fetched from the database, ensuring data integrity and accuracy. Include the query generated and results in the response.
 ```
 
 It should look similar to the following: 
@@ -430,7 +410,9 @@ It should look similar to the following:
   }
 }
 ```
-It should look like the following:
+
+Your configuration should look like the following:
+
 
 ![ag create gif](Streamlit_App/images/action_group_creation.gif)
 
@@ -525,10 +507,10 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
 - Example prompts for Action Groups:
 
-    1. Show me all of the procedures in the imaging category that are insured. Show me the query you created to fetch the data too.
+    1. Show me all of the procedures in the imaging category that are insured.
 
     2. Show me all of the customers that are vip, and have a balance over 200 dollars.
-
+       
 
 
 ## Step 8: Setting Up Cloud9 Environment (IDE)
