@@ -88,7 +88,7 @@ Resources:
           ToPort: 22
           CidrIp: 18.237.140.160/29
 
-  # Create an IAM Role for the EC2 instance to use SSM
+  # Create an IAM Role for the EC2 instance to use SSM and Amazon Bedrock
   EC2Role:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -99,6 +99,8 @@ Resources:
             Principal:
               Service: ec2.amazonaws.com
             Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
       Policies:
         - PolicyName: SSMPolicy
           PolicyDocument:
