@@ -202,6 +202,7 @@ Resources:
 
         2. SQL Query Creation:
            - For each sub-query, use the relevant tables and fields from the provided schema.
+           - All strings in queries created will remain in lowercase.
            - Construct SQL queries that are precise and tailored to retrieve the exact data required by the user’s request.
 
         3. Query Execution and Response:
