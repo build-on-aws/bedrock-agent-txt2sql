@@ -4,7 +4,7 @@ Description: CloudFormation template to create an AWS Bedrock Agent resource and
 Parameters:
   FoundationModel:
     Type: String
-    Default: 'anthropic.claude-3-sonnet-20240229-v1:0'
+    Default: 'anthropic.claude-3-haiku-20240307-v1:0'
   AthenaOutputBucketName:
     Type: String
     Default: 'sl-athena-output-{ENTER ALIAS}'
@@ -194,7 +194,7 @@ Resources:
       AutoPrepare: 'True'
       FoundationModel: !Ref FoundationModel
       Instruction: |
-        You are a SQL developer creating queries for Amazon Athena. After generating SQL queries, you use them to fetch data from the Athena database based on the provided schema and user request. You also return the SQL query that was created.
+        You are a SQL analyst that creates queries for Amazon Athena. You primary objective is to pull data from the Athena database based on the table schemas and user request, then respond. You also return the SQL query created.
 
         1. Query Decomposition and Understanding:
            - Analyze the user's request to understand the main objective.
@@ -314,32 +314,56 @@ Resources:
                     </invoke>
                     </function_calls>
 
-                    Here are the table schemas for the Amazon Athena database
-
-                    <athena_schemas>
-                      <athena_schema> 
-                      CREATE EXTERNAL TABLE athena_db.customers ( `Cust_Id` integer, `Customer` string, `Balance` integer, `Past_Due` integer, `Vip` string ) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED AS TEXTFILE LOCATION 's3://sl-athena-datasource-alias/'; 
-                      </athena_schema>
-                      <athena_schema> 
-                      CREATE EXTERNAL TABLE athena_db.procedures ( `Procedure_ID` string, `Procedure` string, `Category` string, `Price` integer, `Duration` integer, `Insurance` string, `Customer_Id` integer ) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED AS TEXTFILE LOCATION 's3://sl-athena-datasource-alias/'; 
-                      </athena_schema>
-                    </athena_schemas>
-
-                    Here are examples of Amazon Athena queries
-
-                    <athena_examples>
-                      <athena_example> 
-                      SELECT * FROM athena_db.procedures WHERE insurance = 'yes' OR insurance_covered = 'no'; 
-                      </athena_example>
-                      <athena_example> 
-                      SELECT * FROM athena_db.customers WHERE balance >= 0; 
-                      </athena_example>
-                    </athena_examples>
-
                     Here are the functions available:
                     <functions>
                       $tools$
                     </functions>
+
+              Run the query immediately after the request. Include the query generated and results in the response.
+
+              Here are the table schemas for the Amazon Athena database <athena_schemas>.
+
+              <athena_schemas>
+                <athena_schema> 
+                CREATE EXTERNAL TABLE athena_db.customers ( 
+                `Cust_Id` integer, 
+                `Customer` string, 
+                `Balance` integer, 
+                `Past_Due` integer, 
+                `Vip` string ) 
+                ROW FORMAT DELIMITED 
+                FIELDS TERMINATED BY ',' 
+                LINES TERMINATED BY '\n' 
+                STORED AS TEXTFILE LOCATION 's3://sl-athena-output-alias/'; 
+                </athena_schema>
+
+                <athena_schema> 
+                CREATE EXTERNAL TABLE athena_db.procedures ( 
+                `Procedure_ID` string, 
+                `Procedure` string, 
+                `Category` string, 
+                `Price` integer, 
+                `Duration` integer, 
+                `Insurance` string, 
+                `Customer_Id` integer ) 
+                ROW FORMAT DELIMITED 
+                FIELDS TERMINATED BY ',' 
+                LINES TERMINATED BY '\n' 
+                STORED AS TEXTFILE LOCATION 's3://sl-athena-output-alias/'; 
+                </athena_schema>
+              </athena_schemas>
+
+              Here are examples of Amazon Athena queries <athena_examples>.
+
+              <athena_examples>
+                <athena_example> 
+                SELECT * FROM athena_db.procedures WHERE insurance = 'yes' OR insurance_covered = 'no'; 
+                </athena_example>
+
+                <athena_example> 
+                SELECT * FROM athena_db.customers WHERE balance >= 0; 
+                </athena_example>
+              </athena_examples>
 
                     You will ALWAYS follow the below guidelines when you are answering a question:
                     <guidelines>
@@ -371,11 +395,11 @@ Resources:
                 ]
               }
             InferenceConfiguration:
-              MaximumLength: 1024
+              MaximumLength: 2048
               StopSequences: [ "</function_calls>", "</guidelines>", "</thinking>" ]
-              Temperature: 0.7
-              TopK: 50
-              TopP: 0.95
+              Temperature: 0
+              TopK: 250
+              TopP: 1
             ParserMode: "DEFAULT"
             PromptCreationMode: "OVERRIDDEN"
             PromptState: "ENABLED"
