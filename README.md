@@ -512,61 +512,61 @@ Here are examples of Amazon Athena queries <athena_examples>.
     2. Show me all of the customers that are vip, and have a balance over 200 dollars.
        
 
-
-## Step 8: Setting Up Cloud9 Environment (IDE)
-
-1.	Navigate in the Cloud9 management console. Then, select **Create Environment**
-
-![create_environment](streamlit_app/images/create_environment.png)
-
-2. Here, you will enter the following values in each field
-   - **Name:** Bedrock-Environment (Enter any name)
-   - **Instance type:** t3.small
-   - **Platform:** Ubuntu Server 22.04 LTS
-   - **Timeout:** 1 hour  
-
-![ce2](streamlit_app/images/ce2.png)
-
-   - Once complete, select the **Create** button at the bottom of the screen. The environment will take a couple of minutes to spin up. If you get an error spinning up Cloud9 due to lack of resources, you can also choose t2.micro for the instance type and try again. (The Cloud9 environment has Python 3.10.12 version at the time of this publication)
+## Step 8: Setup and Run Streamlit App on EC2 (Optional)
+1. **Obtain CF template to launch the streamlit app**: Download the Cloudformation template from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml). This template will be used to deploy an EC2 instance that has the Streamlit code to run the UI.
 
 
-![ce3](streamlit_app/images/ce3.png)
+2. **Deploy template via Cloudformation**:
+   - In your mangement console, search, then go to the CloudFormation service.
+   - Create a stack with new resources (standard)
 
-3. Navigate back to the Cloud9 Environment, then select **open** next to the Cloud9 you just created. Now, you are ready to setup the Streamlit app!
+   ![Create stack](images/create_stack.png)
 
-![environment](streamlit_app/images/environment.png)
+   - Prepare template: Choose existing template -> Specify template: Upload a template file -> upload the template donaloaded from the previous step. 
+
+  ![Create stack config](images/create_stack_config.png)
+
+   - Next, Provide a stack name like ***ec2-streamlit***. Keep the instance type on the default of t3.small, then go to Next.
+
+   ![Stack details](images/stack_details.png)
+
+   - On the ***Configure stack options*** screen, leave every setting as default, then go to Next. 
+
+   - Scroll down to the capabilities section, and acknowledge the warning message before submitting. 
+
+   - Once the stack is complete, go to the next step.
+
+![Stack complete](images/stack_complete.png)
 
 
-## Step 9: Setting Up and Running the Streamlit App
-1. **Obtain the Streamlit App ZIP File**: Download the zip file of the project [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/archive/refs/heads/main.zip).
+3. **Edit the app to update agent IDs**:
+   - Navigate to the EC2 instance management console. Under instances, you should see `EC2-Streamlit-App`. Select the checkbox next to it, then connect to it via `EC2 Instance Connect`.
 
-2. **Upload to Cloud9**:
-   - In your Cloud9 environment, upload the ZIP file.
+   ![ec2 connect clip](images/ec2_connect.gif)
 
-![Upload file to Cloud9](streamlit_app/images/upload_file_cloud9.png)
-
-3. **Unzip the File**:
-   - Use the command `unzip bedrock-agent-txt2sql-main.zip` to extract the contents.
-4. **Navigate to streamlit_app Folder**:
-   - Change to the directory containing the Streamlit app. Use the command `cd ~/environment/bedrock-agent-txt2sql-main/streamlit_app`
-5. **Update Configuration**:
-   - Open the `InvokeAgent.py` file.
-   - Update the `agentId` and `agentAliasId` variables with the appropriate values, then save it.
-
-![Update Agent ID and alias](streamlit_app/images/update_agentId_and_alias.png)
-
-6. **Install Streamlit** (if not already installed):
-   - Run the following command to install all of the dependencies needed:
-
+   - Next, use the following command  to edit the InvokeAgent.py file:
      ```bash
-     pip install streamlit boto3 pandas
+     sudo vi app/streamlit_app/InvokeAgent.py
      ```
-     
-7. **Run the Streamlit App**:
-   - Execute the command `streamlit run app.py --server.address=0.0.0.0 --server.port=8080`.
-   - Streamlit will start the app, and you can view it by selecting "Preview" within the Cloud9 IDE at the top, then **Preview Running Application**
-   - 
-  ![preview button](streamlit_app/images/preview_btn.png)
+
+   - Press ***i*** to go into edit mode. Then, update the ***AGENT ID*** and ***Agent ALIAS ID*** values. 
+   
+   ![file_edit](images/file_edit.png)
+   
+   - After, hit `Esc`, then save the file changes with the following command:
+     ```bash
+     :wq!
+     ```   
+
+   - Now, start the streamlit app:
+     ```bash
+     streamlit run app/streamlit_app/app.py
+     ```
+  
+   - You should see an external URL. Copy & paste the URL into a web browser to start the streamlit application.
+
+![External IP](images/external_ip.png)
+
 
    - Once the app is running, please test some of the sample prompts provided. (On 1st try, if you receive an error, try again.)
 
