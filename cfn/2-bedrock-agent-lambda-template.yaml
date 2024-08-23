@@ -23,17 +23,29 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonAthenaFullAccess
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - !Ref CloudWatchLogsPolicy
       Policies:
-        - PolicyName: 'CloudWatchLogsPolicy'
+        - PolicyName: 'SQSSendMessagePolicy'
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
                 Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+                  - 'sqs:SendMessage'
+                Resource: !GetAtt AthenaQueryLambdaDLQ.Arn
+
+  CloudWatchLogsPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
 
   BedrockAgentExecutionRole:
     Type: 'AWS::IAM::Role'
@@ -47,15 +59,23 @@ Resources:
             Action: 'sts:AssumeRole'
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
-      Policies:
-        - PolicyName: 'LambdaInvokePolicy'
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'lambda:InvokeFunction'
-                Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AthenaQueryLambda-${AWS::AccountId}'
+        - !Ref LambdaInvokePolicy
+
+  LambdaInvokePolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'lambda:InvokeFunction'
+            Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:AthenaQueryLambda-${AWS::AccountId}'
+
+  AthenaQueryLambdaDLQ:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: !Sub "AthenaQueryLambdaDLQ-${AWS::AccountId}-${AWS::Region}"
 
   AthenaQueryLambda:
     Type: 'AWS::Lambda::Function'
@@ -66,6 +86,9 @@ Resources:
       Runtime: python3.12
       MemorySize: 1024
       Timeout: 120
+      #ReservedConcurrentExecutions: 2  # Set to your desired number
+      DeadLetterConfig:
+        TargetArn: !GetAtt AthenaQueryLambdaDLQ.Arn
       Environment:
         Variables:
           S3Output: !Sub "s3://${AthenaOutputBucketName}/"
@@ -194,7 +217,7 @@ Resources:
       AutoPrepare: 'True'
       FoundationModel: !Ref FoundationModel
       Instruction: |
-        You are a SQL analyst that creates queries for Amazon Athena. You primary objective is to pull data from the Athena database based on the table schemas and user request, then respond. You also return the SQL query created.
+        You are a SQL analyst that creates queries for Amazon Athena. Your primary objective is to pull data from the Athena database based on the table schemas and user request, then respond. You also return the SQL query created.
 
         1. Query Decomposition and Understanding:
            - Analyze the user's request to understand the main objective.
@@ -211,7 +234,6 @@ Resources:
            
         Include the query generated and results in the response.
 
-      
       Description: "Uses Amazon Athena with S3 data source that has .csv files of customer and procedure data"
       IdleSessionTTLInSeconds: 900
       ActionGroups:
