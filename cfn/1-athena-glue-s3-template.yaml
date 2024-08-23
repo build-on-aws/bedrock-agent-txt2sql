@@ -14,28 +14,115 @@ Parameters:
     Type: String
     Default: 'sl-athena-output-{ENTER ALIAS}'
     Description: Name of the S3 bucket to store Athena query results
+  ReplicationDestinationBucket:
+    Type: String
+    Description: "Name of the destination bucket for replication"
+    Default: 'sl-replication-{ENTER ALIAS}'
 
 Resources:
+  ReplicationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
   LoggingBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Sub 'logging-bucket-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  ReplicationDestinationBucketResource:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref ReplicationDestinationBucket
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
 
   S3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Ref S3BucketName
+      AccessControl: Private
       LoggingConfiguration:
         DestinationBucketName: !Ref LoggingBucket
         LogFilePrefix: 'logs/'
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled  
+      ReplicationConfiguration:
+        Role: !GetAtt ReplicationRole.Arn
+        Rules:
+          - Id: "ReplicationRule1"
+            Status: Enabled
+            Prefix: ""
+            Destination:
+              Bucket: !Sub "arn:aws:s3:::${ReplicationDestinationBucket}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
 
   AthenaOutputBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Ref AthenaOutputBucketName
+      AccessControl: Private
       LoggingConfiguration:
         DestinationBucketName: !Ref LoggingBucket
         LogFilePrefix: 'logs/'
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled          
+      ReplicationConfiguration:
+        Role: !GetAtt ReplicationRole.Arn
+        Rules:
+          - Id: "ReplicationRule2"
+            Status: Enabled
+            Prefix: ""
+            Destination:
+              Bucket: !Sub "arn:aws:s3:::${ReplicationDestinationBucket}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
 
   GlueDatabase:
     Type: 'AWS::Glue::Database'
@@ -43,7 +130,44 @@ Resources:
       CatalogId: !Ref 'AWS::AccountId'
       DatabaseInput:
         Name: !Ref AthenaDatabaseName
-  
+
+  GlueServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: glue.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref GlueServicePolicy
+
+  GlueServicePolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - 's3:ListBucket'
+            Resource: 
+              - !Sub "arn:aws:s3:::${S3BucketName}/*"
+              - !Sub "arn:aws:s3:::${S3BucketName}"
+              - !Sub "arn:aws:s3:::${AthenaOutputBucketName}/*"
+              - !Sub "arn:aws:s3:::${AthenaOutputBucketName}"
+          - Effect: Allow
+            Action:
+              - 'glue:CreateCrawler'
+              - 'glue:StartCrawler'
+              - 'glue:GetCrawler'
+              - 'glue:DeleteCrawler'
+            Resource: !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/*"
+
   LambdaExecutionRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -54,28 +178,41 @@ Resources:
             Principal:
               Service: lambda.amazonaws.com
             Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: 'LambdaS3AccessPolicy'
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 's3:PutObject'
-                  - 's3:GetObject'
-                  - 's3:ListBucket'
-                Resource: 
-                  - !Sub "arn:aws:s3:::${S3BucketName}/*"
-                  - !Sub "arn:aws:s3:::${S3BucketName}"
-                  - !Sub "arn:aws:s3:::${AthenaOutputBucketName}/*"
-                  - !Sub "arn:aws:s3:::${AthenaOutputBucketName}"
-              - Effect: Allow
-                Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
-  
+      ManagedPolicyArns:
+        - !Ref LambdaS3AccessPolicy
+
+  LambdaS3AccessPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+            Resource: 
+              - !Sub "arn:aws:s3:::${S3BucketName}/*"
+              - !Sub "arn:aws:s3:::${S3BucketName}"
+              - !Sub "arn:aws:s3:::${AthenaOutputBucketName}/*"
+              - !Sub "arn:aws:s3:::${AthenaOutputBucketName}"
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+          - Effect: Allow
+            Action:
+              - 'sqs:SendMessage'
+            Resource: !GetAtt CopyDataDLQ.Arn
+
+  CopyDataDLQ:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: !Sub "CopyDataDLQ-${AWS::StackName}-${AWS::Region}"
+
   CopyDataLambda:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -84,6 +221,9 @@ Resources:
       Runtime: python3.12
       MemorySize: 1024
       Timeout: 120
+      #ReservedConcurrentExecutions: 2  # Set to your desired number
+      DeadLetterConfig:
+        TargetArn: !GetAtt CopyDataDLQ.Arn
       Code:
         ZipFile: |
           import boto3
@@ -112,9 +252,9 @@ Resources:
                       response = http.request('GET', url)
                       if response.status == 200:
                           s3.put_object(Bucket=bucket, Key=key, Body=response.data)
-                          logger.info(f"Successfully uploaded {key} to {bucket}")
+                          logger.info(f"Successfully uploaded {key} to ${bucket}")
                       else:
-                          logger.error(f"Failed to download {url}, status code: {response.status}")
+                          logger.error(f"Failed to download ${url}, status code: ${response.status}")
                           cfnresponse.send(event, context, cfnresponse.FAILED, {'Status': 'Failed'})
                           return
                   time.sleep(2)
@@ -156,41 +296,7 @@ Resources:
         S3Targets:
           - Path: !Sub "s3://${S3BucketName}/procedures/"
       TablePrefix: 'procedures_'
-  
-  GlueServiceRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: glue.amazonaws.com
-            Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: 'GlueServicePolicy'
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 's3:GetObject'
-                  - 's3:PutObject'
-                  - 's3:ListBucket'
-                Resource: 
-                  - !Sub "arn:aws:s3:::${S3BucketName}/*"
-                  - !Sub "arn:aws:s3:::${S3BucketName}"
-                  - !Sub "arn:aws:s3:::${AthenaOutputBucketName}/*"
-                  - !Sub "arn:aws:s3:::${AthenaOutputBucketName}"
-              - Effect: Allow
-                Action:
-                  - 'glue:CreateCrawler'
-                  - 'glue:StartCrawler'
-                  - 'glue:GetCrawler'
-                  - 'glue:DeleteCrawler'
-                Resource: !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/*"
 
-  
   GlueTableCustomers:
     Type: 'AWS::Glue::Table'
     DependsOn: GlueCrawlerCustomers
