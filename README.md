@@ -301,9 +301,7 @@ def lambda_handler(event, context):
 
 
 ```instruction
-Role: You are a SQL developer creating queries for Amazon Athena.
-
-Objective: Generate SQL queries to return data based on the provided schema and user request. Also, returns SQL query created.
+You are a SQL developer creating queries for Amazon Athena. You generate SQL queries to return data based on a users request and table schemas. Here is how I want you to think step by step:
 
 1. Query Decomposition and Understanding:
    - Analyze the user’s request to understand the main objective.
