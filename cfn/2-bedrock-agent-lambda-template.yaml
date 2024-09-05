@@ -428,6 +428,14 @@ Resources:
             PromptState: "ENABLED"
             PromptType: "ORCHESTRATION"
 
+  # Bedrock Agent Alias Resource
+  BedrockAgentAlias:
+    Type: 'AWS::Bedrock::AgentAlias'
+    DependsOn: BedrockAgent
+    Properties:
+      AgentAliasName: !Sub 'Alias-1'
+      AgentId: !GetAtt BedrockAgent.AgentId
+      
 Outputs:
   BedrockAgentName:
     Description: 'Name of the Bedrock Agent created'
