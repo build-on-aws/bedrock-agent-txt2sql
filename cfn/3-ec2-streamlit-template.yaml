@@ -159,7 +159,7 @@ Resources:
           exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
           apt-get update -y
           apt-get upgrade -y
-          apt-get install -y python3-pip git
+          apt-get install -y python3-pip git ec2-instance-connect
           git clone https://github.com/build-on-aws/bedrock-agent-txt2sql.git /home/ubuntu/app
           pip3 install -r /home/ubuntu/app/streamlit_app/requirements.txt
           cd /home/ubuntu/app/streamlit_app
