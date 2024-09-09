@@ -544,7 +544,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
    - Next, use the following command  to edit the InvokeAgent.py file:
      ```bash
-     sudo vi app/InvokeAgent.py
+     sudo vi app/streamlit_app/InvokeAgent.py
      ```
 
    - Press ***i*** to go into edit mode. Then, update the ***AGENT ID*** and ***Agent ALIAS ID*** values. 
@@ -558,7 +558,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
    - Now, start the streamlit app:
      ```bash
-     streamlit run app/app.py
+     streamlit run app/streamlit_app/app.py
      ```
   
    - You should see an external URL. Copy & paste the URL into a web browser to start the streamlit application.
