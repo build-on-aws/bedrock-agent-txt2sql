@@ -583,13 +583,13 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 ***Step 1***
 Download the Cloudformation templates from below, then deploy in order:
 
-Click here to 🚀 [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
+Click here to download template 1 🚀 - [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
 - This template will create an Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
 
-Click here to 🚀 [2 - Agent-Lambda Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml) 
+Click here to download template 2 🚀 - [2 - Agent-Lambda Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml) 
 - This next template will create an Amazon bedrock agent, action group, with an associated Lambda function.
 
-Click here to 🚀 :button[3 - EC2 UI Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml)
+Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml)
 - This template will be used to deploy an EC2 instance that will run the code for the Streamlit UI.
 
 ***Step 2***
