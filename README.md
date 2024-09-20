@@ -626,11 +626,12 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
  - Select the **Settings** tab, then the **Manage** button.
 ![athena 2](images/athena2.png)
 
- - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **s3://sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
+ - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
 ![athena 2.5](images/athena2.5.png)
 
 ![athena 3](images/athena3.png)
 
+- Next, refer to **Step 8** above to configure your EC2 instance.
 
 
 ## Security
