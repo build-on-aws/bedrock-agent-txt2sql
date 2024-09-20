@@ -2,9 +2,11 @@
 # Setup Amazon Bedrock Agent for Text-to-SQL Using Amazon Athena with Streamlit
 
 ## Introduction
-We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases. 
+In this project, we will set up an Amazon Bedrock agent with an action group that can translate natural language queries (NLQ) into SQL queries. The agent will query an Amazon Athena database, but the concept can be extended to most SQL databases.
 
-If you would like to deploy the resources via **AWS Cloudformation** instead of the manual setup, please follow the guide at the bottom section of this readme.
+For those who prefer an Infrastructure-as-Code (IaC) solution, we provide an AWS CloudFormation template that will deploy all the necessary resources. If you would like to deploy via CloudFormation, please refer to the guide in the section below.
+
+Alternatively, this README will walk you through the step-by-step process to set up the Amazon Bedrock agent manually using the AWS Console.
 
 ## Prerequisites
 - An active AWS Account.
@@ -16,9 +18,8 @@ If you would like to deploy the resources via **AWS Cloudformation** instead of 
 
 ![Diagram](images/diagram.png)
 
-## Configuration and Setup
 
-### Step 1: Grant Model Access
+### Grant Model Access
 
 - We will need to grant access to the models that will be needed for our Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange **Manage model access** button.
 
@@ -32,8 +33,67 @@ If you would like to deploy the resources via **AWS Cloudformation** instead of 
 ![Access granted](images/access_granted.png)
 
 
+## Deploy resources via AWS Cloudformation:
+*Here are the instructions to deploy the resources within your environment:*
 
-### Step 2: Creating S3 Buckets
+***Step 1***
+
+Download the Cloudformation templates from below, then deploy in order:
+
+Click here to download template 1 🚀 - [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
+- This template will create Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
+
+Click here to download template 2 🚀 - [2 - Agent-Lambda Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml) 
+- This next template will create an Amazon bedrock agent, action group, with an associated Lambda function.
+
+Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml)
+- This template will be used to deploy an EC2 instance that will run the code for the Streamlit UI.
+
+***Step 2***
+
+   - In your mangement console, search, then go to the CloudFormation service.
+   - Create a stack with new resources (standard)
+
+   ![Create stack](images/create_stack.png)
+
+   - Prepare template: ***Choose existing template*** -> Specify template: ***Upload a template file*** -> upload the template downloaded from the previous step. 
+
+  ![Create stack config](images/create_stack_txt2sql.png)
+
+   - Next, Provide a stack name like ***athena-glue-s3***. Keep the instance type on the default of t3.small, then go to Next.
+
+   ![Stack details](images/stack_details.png)
+
+   - On the ***Configure stack options*** screen, leave every setting as default, then go to Next. 
+
+   - Scroll down to the capabilities section, and acknowledge the warning message before submitting. 
+
+   - Once the stack is complete, follow the same process and deploy the remaing two templates. After, go to the next step.
+
+![Stack complete](images/stack_complete.png)
+
+***Step 3***
+
+- Update Amazon Athena data source for SQL results:
+
+ - Navigate to the Amazon Athena management console. Then, select **Launch query editor**.
+![athena 1](images/athena1.png)
+
+ - Select the **Settings** tab, then the **Manage** button.
+![athena 2](images/athena2.png)
+
+ - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
+![athena 2.5](images/athena2.5.png)
+
+![athena 3](images/athena3.png)
+
+- Next, refer to **Step 8** below to configure your EC2 instance.
+
+
+
+## Step-by-step Configuration and Setup
+
+### Step 1: Creating S3 Buckets
 - Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 24 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
 (Make sure to update **{alias}** with the appropriate value throughout the README instructions.)
@@ -68,7 +128,7 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/S
 - **Amazon Athena Bucket**: Create another S3 bucket for the Athena service. Call it `athena-destination-store-{alias}`. You will need to use this S3 bucket when configuring Amazon Athena in the next step. 
 
 
-### Step 3: Setup  Amazon Athena
+### Step 2: Setup Amazon Athena
 
 - Search for the Amazon Athena service, then navigate to the Athena management console. Validate that the **Query your data with Trino SQL** radio button is selected, then press **Launch query editor**.
 
@@ -164,7 +224,7 @@ WHERE balance >= 0;
 
 
 
-### Step 4: Lambda Function Configuration
+### Step 3: Lambda Function Configuration
 - Create a Lambda function (Python 3.12) for the Bedrock agent's action group. We will call this Lambda function `bedrock-agent-txtsql-action`. 
 
 ![Create Function](images/create_function.png)
@@ -294,7 +354,7 @@ def lambda_handler(event, context):
 
 
 
-### Step 5: Setup Bedrock agent and action group 
+### Step 4: Setup Bedrock agent and action group 
 - Navigate to the Bedrock console. Go to the toggle on the left, and under **Orchestration** select ***Agents***, then ***Create Agent***. Provide an agent name, like `athena-agent` then ***Create***.
 
 ![agent create](images/agent_create.png)
@@ -486,7 +546,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
 
 
-### Step 6: Create an alias
+### Step 5: Create an alias
 - While query-agent is still selected, scroll down to the Alias secion and select ***Create***. Choose a name of your liking. Make sure to copy and save your **AliasID**. You will need this in step 9.
  
 ![Create alias](images/create_alias.png)
@@ -496,7 +556,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
 ![Agent ARN2](images/agent_arn2.png)
 
 
-## Step 7: Testing the Setup
+## Step 6: Testing the Setup
 
 ### Testing the Bedrock Agent
 - While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Select ***Edit in Agent Builder***, and make sure to **Prepare** the agent so that the changes made can update. After, ***Save and exit***. On the right, you will be able to enter prompts in the user interface to test your Bedrock agent.`(You may be prompt to prepare the agent once more before testing the latest chages form the AWS console)` 
@@ -512,7 +572,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
     2. Show me all of the customers that are vip, and have a balance over 200 dollars.
        
 
-## Step 8: Setup and Run Streamlit App on EC2 (Optional)
+## Step 7: Setup and Run Streamlit App on EC2 (Optional)
 1. **Obtain CF template to launch the streamlit app**: Download the Cloudformation template from [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml). This template will be used to deploy an EC2 instance that has the Streamlit code to run the UI.
 
 
@@ -574,64 +634,6 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 4.	Clean Up Cloud9 Environment:
 - Navigate to the Cloud9 management console.
 - Select the Cloud9 environment you created, then delete.
-
-
-
-## Alternative Setup: Deploy resources via AWS Cloudformation:
-*Now, here are the instructions to deploy the resources within your environment:*
-
-***Step 1***
-
-Download the Cloudformation templates from below, then deploy in order:
-
-Click here to download template 1 🚀 - [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
-- This template will create Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
-
-Click here to download template 2 🚀 - [2 - Agent-Lambda Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml) 
-- This next template will create an Amazon bedrock agent, action group, with an associated Lambda function.
-
-Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml)
-- This template will be used to deploy an EC2 instance that will run the code for the Streamlit UI.
-
-***Step 2***
-
-   - In your mangement console, search, then go to the CloudFormation service.
-   - Create a stack with new resources (standard)
-
-   ![Create stack](images/create_stack.png)
-
-   - Prepare template: ***Choose existing template*** -> Specify template: ***Upload a template file*** -> upload the template downloaded from the previous step. 
-
-  ![Create stack config](images/create_stack_txt2sql.png)
-
-   - Next, Provide a stack name like ***athena-glue-s3***. Keep the instance type on the default of t3.small, then go to Next.
-
-   ![Stack details](images/stack_details.png)
-
-   - On the ***Configure stack options*** screen, leave every setting as default, then go to Next. 
-
-   - Scroll down to the capabilities section, and acknowledge the warning message before submitting. 
-
-   - Once the stack is complete, follow the same process and deploy the remaing two templates. After, go to the next step.
-
-![Stack complete](images/stack_complete.png)
-
-***Step 3***
-
-- Update Amazon Athena data source for SQL results:
-
- - Navigate to the Amazon Athena management console. Then, select **Launch query editor**.
-![athena 1](images/athena1.png)
-
- - Select the **Settings** tab, then the **Manage** button.
-![athena 2](images/athena2.png)
-
- - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
-![athena 2.5](images/athena2.5.png)
-
-![athena 3](images/athena3.png)
-
-- Next, refer to **Step 8** above to configure your EC2 instance.
 
 
 ## Security
