@@ -1,5 +1,5 @@
 
-# Setup Amazon Bedrock Agent for Text2SQL Using Amazon Athena with Streamlit
+# Setup Amazon Bedrock Agent for Text-to-SQL Using Amazon Athena with Streamlit
 
 ## Introduction
 We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases.
@@ -522,9 +522,9 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
    - Prepare template: Choose existing template -> Specify template: Upload a template file -> upload the template donaloaded from the previous step. 
 
-  ![Create stack config](images/create_stack_config.png)
+  ![Create stack config](images/create_stack_txt2sql.png)
 
-   - Next, Provide a stack name like ***ec2-streamlit***. Keep the instance type on the default of t3.small, then go to Next.
+   - Next, Provide a stack name like ***athena-glue-s3***. Keep the instance type on the default of t3.small, then go to Next.
 
    ![Stack details](images/stack_details.png)
 
@@ -532,19 +532,31 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
    - Scroll down to the capabilities section, and acknowledge the warning message before submitting. 
 
-   - Once the stack is complete, go to the next step.
+   - Once the stack is complete, follow the same process and deploy the remaing two templates. After, go to the next step.
 
 ![Stack complete](images/stack_complete.png)
 
+3. **Update Amazon Athena data source for SQL results**
 
-3. **Edit the app to update agent IDs**:
+ - Navigate to the Amazon Athena management console. Then, select **Launch query editor**.
+![athena 1](images/athena1.png)
+
+ - Select the **Settings** tab, then the **Manage** button.
+![athena 2](images/athena2.png)
+
+ -Browse your Amazon S3 buckets, and select the radio button for S3 bucket **s3://sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
+![athena 2.5](images/athena2.5.png)
+
+![athena 3](images/athena3.png)
+
+4. **Edit the app to update agent IDs**:
    - Navigate to the EC2 instance management console. Under instances, you should see `EC2-Streamlit-App`. Select the checkbox next to it, then connect to it via `EC2 Instance Connect`.
 
    ![ec2 connect clip](images/ec2_connect.gif)
 
-   - Next, use the following command  to edit the InvokeAgent.py file:
+   - Next, use the following command  to edit the invoke_agent.py file:
      ```bash
-     sudo vi app/streamlit_app/InvokeAgent.py
+     sudo vi app/streamlit_app/invoke_agent.py
      ```
 
    - Press ***i*** to go into edit mode. Then, update the ***AGENT ID*** and ***Agent ALIAS ID*** values. 
@@ -595,6 +607,42 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 4.	Clean Up Cloud9 Environment:
 - Navigate to the Cloud9 management console.
 - Select the Cloud9 environment you created, then delete.
+
+
+## Alternative: Deploy resources via AWS Cloudformation
+
+*Now, here are the instructions to deploy the resources within your environment:*
+
+Download the Cloudformation templates from below, then deploy in order:
+
+Click here to 🚀 :button[1 - Athena-Glue-S3 Stack]{href="https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml" variant="primary" action="download"} - This template will create an Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
+
+Click here to 🚀 :button[2 - Agent-Lambda Stack]{href="https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml" variant="primary" action="download"} - This next template will create an Amazon bedrock agent, action group, with an associated Lambda function.
+
+Click here to 🚀 :button[3 - EC2_UI Stack]{href="https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/3-ec2-streamlit-template.yaml" variant="primary" action="download"} - This template will be used to deploy an EC2 instance that will run the code for the Streamlit UI.
+
+
+**Deploy templates via AWS CloudFormation**:
+   - From the AWS mangement console, search for, then navigate to the AWS CloudFormation service.
+   - Create a stack with new resources (standard)
+
+   ![Create stack](/static/images/create_stack.png)
+
+   - ***Prepare template:*** Choose existing template -> ***Specify template:*** Upload a template file -> upload the first template from the previous step. 
+
+  ![Create stack config](/static/images-dallas/create_stack_config_s3load.png)
+
+   - Next, Provide a stack name like ***s3-dataload***. Keep the instance type on the default of t3.small, then go to ***Next***.
+
+   ![Stack details](/static/images-dallas/stack_details_s3load.png)
+
+   - On the ***Configure stack options*** screen, leave settings as default, then go to ***Next***. 
+
+   - Scroll down to the capabilities section, and acknowledge the warning message before submitting. 
+
+   - Once the stack is complete, deploy the second template in the same fashion, but provide a different template name.
+
+![Stack complete](/static/images-dallas/stack_complete_s3load.png)
 
 
 
