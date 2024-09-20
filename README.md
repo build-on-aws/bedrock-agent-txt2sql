@@ -4,7 +4,7 @@
 ## Introduction
 In this project, we will set up an Amazon Bedrock agent with an action group that can translate natural language queries (NLQ) into SQL queries. The agent will query an Amazon Athena database, but the concept can be extended to most SQL databases.
 
-For those who prefer an Infrastructure-as-Code (IaC) solution, we provide an AWS CloudFormation template that will deploy all the necessary resources. If you would like to deploy via CloudFormation, please refer to the guide in the section below.
+For those who prefer an Infrastructure-as-Code (IaC) solution, we provide an AWS CloudFormation template that will deploy all the necessary resources. If you would like to deploy via AWS CloudFormation, please refer to the guide in the section below.
 
 Alternatively, this README will walk you through the step-by-step process to set up the Amazon Bedrock agent manually using the AWS Console.
 
