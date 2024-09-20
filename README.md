@@ -581,6 +581,7 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 *Now, here are the instructions to deploy the resources within your environment:*
 
 ***Step 1***
+
 Download the Cloudformation templates from below, then deploy in order:
 
 Click here to download template 1 🚀 - [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
