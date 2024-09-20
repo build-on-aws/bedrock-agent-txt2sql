@@ -575,7 +575,7 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 
 
 
-**Alternative: Deploy template via Cloudformation**:
+*Alternative: Deploy template via Cloudformation*:
 *Now, here are the instructions to deploy the resources within your environment:*
 
 ***Step 1***
