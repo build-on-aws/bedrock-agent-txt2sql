@@ -584,7 +584,7 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 Download the Cloudformation templates from below, then deploy in order:
 
 Click here to download template 1 🚀 - [1 - Athena-Glue-S3 Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/1-athena-glue-s3-template.yaml) 
-- This template will create an Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
+- This template will create Amazon Athena, AWS Glue, and an Amazon S3 bucket. Then, it uploads customer and procedure .csv files to the S3 bucket. 
 
 Click here to download template 2 🚀 - [2 - Agent-Lambda Stack](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/cfn/2-bedrock-agent-lambda-template.yaml) 
 - This next template will create an Amazon bedrock agent, action group, with an associated Lambda function.
