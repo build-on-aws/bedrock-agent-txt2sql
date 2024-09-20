@@ -25,6 +25,10 @@ Parameters:
     Description: VPC CIDR
     Type: String
     Default: 10.0.1.0/24
+  SSHRegionIPsAllowed:
+    Description: Provides EC2 SSH access for CIDR range in a region. (Default is us-west-2)
+    Type: String
+    Default: 18.237.140.160/29
 
 Resources:
   # Create a VPC
@@ -101,7 +105,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 18.237.140.160/29  # Restrict SSH access to a specific IP (CIDR for us-west-2)
+          CidrIp: !Ref SSHRegionIPsAllowed  # Restrict SSH access to a specific IP (CIDR for us-west-2)
 
   # Security Group Egress Rule
   InstanceSecurityGroupEgress:
