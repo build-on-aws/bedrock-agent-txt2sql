@@ -85,7 +85,7 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
 
 ![athena 3](images/athena3.png)
 
-- Next, refer to **Step 8** below to configure your EC2 instance.
+- Next, refer to **Step 7** below to configure your EC2 instance.
 
 
 
