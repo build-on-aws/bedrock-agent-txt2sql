@@ -74,9 +74,7 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
 
 ***Step 3***
 
-- Update Amazon Athena data source for SQL results:
-
- - Navigate to the Amazon Athena management console. Then, select **Launch query editor**.
+- Update Amazon Athena data source for SQL results. Navigate to the Amazon Athena management console. Then, select **Launch query editor**.
 ![athena 1](images/athena1.png)
 
  - Select the **Settings** tab, then the **Manage** button.
