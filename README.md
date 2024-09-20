@@ -620,7 +620,7 @@ Click here to 🚀 :button[3 - EC2_UI Stack]{href="https://github.com/build-on-a
  - Select the **Settings** tab, then the **Manage** button.
 ![athena 2](images/athena2.png)
 
- -Browse your Amazon S3 buckets, and select the radio button for S3 bucket **s3://sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
+ - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **s3://sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
 ![athena 2.5](images/athena2.5.png)
 
 ![athena 3](images/athena3.png)
