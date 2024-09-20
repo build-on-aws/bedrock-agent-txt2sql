@@ -4,7 +4,7 @@
 ## Introduction
 We will setup an Amazon Bedrock agent with an action group that will be able to translate natural language to SQL queries. In this project, we will be querying an Amazon Athena database, but the concept can be applied to most SQL databases. 
 
-- If you would like to deploy the resources via **AWS Cloudformation** instead of the manual setup, please follow the guide at the bottom section of this readme.
+If you would like to deploy the resources via **AWS Cloudformation** instead of the manual setup, please follow the guide at the bottom section of this readme.
 
 ## Prerequisites
 - An active AWS Account.
