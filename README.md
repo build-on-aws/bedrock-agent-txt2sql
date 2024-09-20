@@ -600,7 +600,7 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
 
    ![Create stack](images/create_stack.png)
 
-   - Prepare template: Choose existing template -> Specify template: Upload a template file -> upload the template donaloaded from the previous step. 
+   - Prepare template: ***Choose existing template*** -> Specify template: ***Upload a template file*** -> upload the template downloaded from the previous step. 
 
   ![Create stack config](images/create_stack_txt2sql.png)
 
