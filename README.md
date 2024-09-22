@@ -574,9 +574,11 @@ Here are examples of Amazon Athena queries <athena_examples>.
 - At the top, select **Save**, then **Prepare**. After, select **Save and exit**. Then, scroll down to the **Alias** section and select ***Create***. Choose a name of your liking, then create the alias. Make sure to copy and save your **AliasID**. Also, scroll to the top and save the Agent ID located in the **Agent overview** section. You will need this in step 7. Refer to the screenshots below.
  
  ***Alias Agent ID***
+
 ![Create alias](images/create_alias.png)
 
  ***Agent ID***
+ 
 ![Agent ARN2](images/agent_arn2.png)
 
 
