@@ -11,7 +11,7 @@ Alternatively, this README will walk you through the step-by-step process to set
 ## Prerequisites
 - An active AWS Account.
 - Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
-- Access will need to be granted to the **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
+- Access will need to be granted to the **Titan Embeddings G1 - Text** and **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
 
 
 ## Diagram
@@ -21,11 +21,11 @@ Alternatively, this README will walk you through the step-by-step process to set
 
 ### Grant Model Access
 
-- We will need to grant access to the models that will be needed for our Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange **Manage model access** button.
+- We will need to grant access to the models that will be needed for the Amazon Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange **Enable specific models** button.
 
 ![Model access](images/model_access.png)
 
-- Select the checkbox for the base model column **Anthropic: Claude 3 Haiku**. This will provide you access to the required models. After, scroll down to the bottom right and select **Request model access**.
+- To have access to the required models, scroll down and select the checkbox for the **Titan Embedding G1 - Text** and **Anthropic: Claude 3 Haiku** model. Then in the bottom right, select **Next**, then **Submit**.
 
 
 - After, verify that the Access status of the Models are green with **Access granted**.
@@ -92,7 +92,7 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
 ## Step-by-step Configuration and Setup
 
 ### Step 1: Creating S3 Buckets
-- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `InvokeAgent.py` file on line 24 of the code. 
+- Make sure that you are in the **us-west-2** region. If another region is required, you will need to update the region in the `invoke_agent.py` file on line 24 of the code. 
 - **Domain Data Bucket**: Create an S3 bucket to store the domain data. For example, call the S3 bucket `athena-datasource-{alias}`. We will use the default settings. 
 (Make sure to update **{alias}** with the appropriate value throughout the README instructions.)
 
@@ -340,7 +340,7 @@ def lambda_handler(event, context):
 
 ![Lambda role name 2](images/lambda_config1.png)
 
-- Update the memory to 1024 MB, and Timeout to 1 minute. Scroll to the bottom, and save the changes.
+- Update the memory to **1024 MB**, and Timeout to **1 minute**. Scroll to the bottom, and save the changes.
 
 ![Lambda role name 2](images/lambda_config2.png)
 
@@ -357,7 +357,7 @@ def lambda_handler(event, context):
 
 ![agent create](images/agent_create.png)
 
-- The agent description is optional, and use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
+- For this next screen, agent description is optional. Use the default new service role. For the model, select **Anthropic Claude 3 Haiku**. Next, provide the following instruction for the agent:
 
 
 ```instruction
@@ -387,7 +387,7 @@ It should look similar to the following:
 
 - Next, we will add an action group. Scroll down to `Action groups` then select ***Add***.
 
-- Call the action group `query-athena`. We will keep `Action group type` set to ***Define with API schemas***. `Action group invocations` should be set to ***select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
+- Call the action group `query-athena`. In the `Action group type` section, select ***Define with API schemas***. For `Action group invocations`, set to ***Select an existing Lambda function***. For the Lambda function, select `bedrock-agent-txtsql-action`.
 
 - For the `Action group Schema`, we will choose ***Define with in-line OpenAPI schema editor***. Replace the default schema in the **In-line OpenAPI schema** editor with the schema provided below. You can also retrieve the schema from the repo [here](https://github.com/build-on-aws/bedrock-agent-txt2sql/blob/main/schema/athena-schema.json). After, select ***Add***.
 `(This API schema is needed so that the bedrock agent knows the format structure and parameters needed for the action group to interact with the Lambda function.)`
@@ -476,14 +476,14 @@ Your configuration should look like the following:
 
 
 
-- Now we will need to modify the **Advanced prompts**. Select the orange **Edit in Agent Builder** button at the top. Scroll to the bottom and in the advanced prompts section, select `Edit`.
+- Now we will need to modify the **Advanced prompts**. While your still in edit mode, Scroll dow to the advanced prompts section, and select `Edit`.
 
 ![ad prompt btn](images/advance_prompt_btn.png)
 
 
-- In the `Advanced prompts`, navigate to the **Orchestration** tab. Enable the `Override orchestration template defaults` option. Also, make sure that `Activate orchestration template` is enabled. 
+- In the `Advanced prompts`, navigate to the **Orchestration** tab. Enable the `Override orchestration template defaults` option. `Activate orchestration template` should be enabled by default. Otherwise, enable it.
 
-- In the `Prompt template editor`, go to line 22-23, then copy/paste the following prompt:
+- In the `Prompt template editor`, go to line 19-20, make a line space, then copy/paste the following prompt (**Make sure to update the alias values in the schemas first**):
 
 ```sql
 Here are the table schemas for the Amazon Athena database <athena_schemas>. 
@@ -545,20 +545,19 @@ Here are examples of Amazon Athena queries <athena_examples>.
 
 
 ### Step 5: Create an alias
-- While query-agent is still selected, scroll down to the Alias secion and select ***Create***. Choose a name of your liking. Make sure to copy and save your **AliasID**. You will need this in step 9.
+- At the top, select **Save**, then **Prepare**. After, select **Save and exit**. Then, scroll down to the **Alias** section and select ***Create***. Choose a name of your liking, then create the alias. Make sure to copy and save your **AliasID**. Also, scroll to the top and save the Agent ID located in the **Agent overview** section. You will need this in step 7. Refer to the screenshots below.
  
+ ***Alias Agent ID***
 ![Create alias](images/create_alias.png)
 
-- Next, navigate to the **Agent Overview** settings for the agent created by selecting **Agents** under the Orchestration dropdown menu on the left of the screen, then select the agent. Save the **AgentID** because you will also need this in step 9.
-
+ ***Agent ID***
 ![Agent ARN2](images/agent_arn2.png)
 
 
 ## Step 6: Testing the Setup
 
 ### Testing the Bedrock Agent
-- While on the Bedrock console, select **Agents** under the *Orchestration* tab, then the agent you created. Select ***Edit in Agent Builder***, and make sure to **Prepare** the agent so that the changes made can update. After, ***Save and exit***. On the right, you will be able to enter prompts in the user interface to test your Bedrock agent.`(You may be prompt to prepare the agent once more before testing the latest chages form the AWS console)` 
-
+- In the test UI on the right, select **Prepare**. Then, enter prompts in the user interface to test your Bedrock agent.
 
 ![Agent test](images/agent_test.png)
 
