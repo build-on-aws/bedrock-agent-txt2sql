@@ -595,6 +595,10 @@ Here are examples of Amazon Athena queries <athena_examples>.
     1. Show me all of the procedures in the imaging category that are insured.
 
     2. Show me all of the customers that are vip, and have a balance over 200 dollars.
+
+    3. Return to me the number of procedures that are in the laboratory category.
+
+    4. Get me data of all procedures that were not insured, with customer names.
        
 
 ## Step 7: Setup and Run Streamlit App on EC2 (Optional)
