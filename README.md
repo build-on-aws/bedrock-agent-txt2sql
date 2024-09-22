@@ -80,12 +80,37 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
  - Select the **Settings** tab, then the **Manage** button.
 ![athena 2](images/athena2.png)
 
- - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **sl-athena-output-{Alias}-{Account-Id}-{Region}/**. After, save the changes.
+ - Browse your Amazon S3 buckets, and select the radio button for S3 bucket **sl-athena-output-{Alias}-{Account-Id}-{Region}**. After, save the changes.
 ![athena 2.5](images/athena2.5.png)
 
 ![athena 3](images/athena3.png)
 
-- Next, refer to **Step 7** below to configure your EC2 instance.
+***Step 4***
+
+### Testing the Bedrock Agent
+
+- Navigate to the Bedrock console. Go to the toggle on the left, and under **Builder tools** select ***Agents***, then the `athena-agent` that was created.
+
+![navigate to agent](images/navigate_to_agent.png)
+
+
+- In the management console on the right, you have a test user interface. Enter prompts in the user interface to test your Bedrock agent.
+
+![Agent test](images/agent_test.png)
+
+
+- Example prompts for Action Groups:
+
+    1. Show me all of the procedures in the imaging category that are insured.
+
+    2. Show me all of the customers that are vip, and have a balance over 200 dollars.
+
+    3. Return to me the number of procedures that are in the laboratory category.
+
+    4. Get me data of all procedures that were not insured, with customer names.
+
+
+- If you would like to launch the Streamlit app user interface, refer to **Step 7** below to configure the EC2 instance.
 
 
 
