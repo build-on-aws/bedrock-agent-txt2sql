@@ -560,6 +560,7 @@ Here are examples of Amazon Athena queries <athena_examples>.
 </athena_examples>
 ```
 
+- Here is a clip on configuring the requirements from above.
 ![adv prompt create gif](images/adv_prompt_creation.gif)
 
 
