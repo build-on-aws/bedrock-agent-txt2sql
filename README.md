@@ -157,7 +157,7 @@ curl https://raw.githubusercontent.com/build-on-aws/bedrock-agent-txt2sql/main/S
 
 ![Athena query button](images/athena_query_edit_btn.png)
 
-- Before you run your first query in Athena, you need to set up a query result location with Amazon S3. Select the **Settings** tab, then the **Manage** button in the **Query result location and ecryption** section. 
+- Before you run your first query in Athena, you need to set up a query result location with Amazon S3. Select the **Settings** tab, then the **Manage** button in the **Query result location and encryption** section. 
 
 ![Athena manage button](images/athena_manage_btn.png)
 
