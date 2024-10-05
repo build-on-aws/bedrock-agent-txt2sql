@@ -109,7 +109,7 @@ for chat in reversed(st.session_state['history']):
     # Creating columns for Question
     col1_q, col2_q = st.columns([2, 10])
     with col1_q:
-        human_image = Image.open('/home/ubuntu/app/streamlit_app/human_face.png')
+        human_image = Image.open('./images/human_face.png')
         circular_human_image = crop_to_circle(human_image)
         st.image(circular_human_image, width=125)
     with col2_q:
@@ -119,7 +119,7 @@ for chat in reversed(st.session_state['history']):
     col1_a, col2_a = st.columns([2, 10])
     if isinstance(chat["answer"], pd.DataFrame):
         with col1_a:
-            robot_image = Image.open('/home/ubuntu/app/streamlit_app/robot_face.jpg')
+            robot_image = Image.open('./images/robot_face.jpg')
             circular_robot_image = crop_to_circle(robot_image)
             st.image(circular_robot_image, width=100)
         with col2_a:
