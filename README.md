@@ -5,18 +5,19 @@
 1. [Introduction](#introduction)
 2. [Prerequisites](#prerequisites)
 3. [Diagram](#diagram)
-4. [Grant Model Access](#grant-model-access)
-5. [Deploy Resources via AWS CloudFormation](#deploy-resources-via-aws-cloudformation)
-6. [Step-by-step Configuration and Setup](#step-by-step-configuration-and-setup)
+4. [Cost](#cost)
+5. [Grant Model Access](#grant-model-access)
+6. [Deploy Resources via AWS CloudFormation](#deploy-resources-via-aws-cloudformation)
+7. [Step-by-step Configuration and Setup](#step-by-step-configuration-and-setup)
    - [Step 1: Creating S3 Buckets](#step-1-creating-s3-buckets)
    - [Step 2: Setup Amazon Athena](#step-2-setup-amazon-athena)
    - [Step 3: Lambda Function Configuration](#step-3-lambda-function-configuration)
    - [Step 4: Setup Bedrock Agent and Action Group](#step-4-setup-bedrock-agent-and-action-group)
-7. [Testing the Bedrock Agent](#testing-the-bedrock-agent)
-8. [Step 7: Setup and Run Streamlit App on EC2 (Optional)](#step-7-setup-and-run-streamlit-app-on-ec2-optional)
-9. [Cleanup](#cleanup)
-10. [Security](#security)
-11. [License](#license)
+8. [Testing the Bedrock Agent](#testing-the-bedrock-agent)
+9. [Step 7: Setup and Run Streamlit App on EC2 (Optional)](#step-7-setup-and-run-streamlit-app-on-ec2-optional)
+10. [Cleanup](#cleanup)
+11. [Security](#security)
+12. [License](#license)
 
 ## Overview
 In this project, we will set up an Amazon Bedrock agent with an action group that can translate natural language queries (NLQ) into SQL queries. The agent will query an Amazon Athena database, but the concept can be extended to most SQL databases.
@@ -34,6 +35,18 @@ Alternatively, this README will walk you through the step-by-step process to set
 ## Diagram
 
 ![Diagram](images/diagram.png)
+
+## Cost
+You are responsible for the cost of the AWS services used while running this Guidance. As of October 2024, the cost for running this Guidance with the default settings in the US West (Oregon) AWS Region is approximately $412.43 per month for processing 100,000 request.
+
+We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance.
+
+| AWS Service                           | Dimensions                                | Cost [USD]  |
+|---------------------------------------|-------------------------------------------|-------------|
+| EC2 Instance (t3.small)               | Running an EC2 instance 24/7 per month    | $17.74      |
+| AWS Lambda                            | 100k Invocations per month                | $0.68       |
+| Amazon Bedrock Anthropic Claude 3 Haiku (Input)  | Per 1k tokens (750 on average)            | $0.00025    |
+| Amazon Bedrock Anthropic Claude 3 Haiku (Output) | Per 1k tokens (750 on average)            | $0.00125    |
 
 
 ### Grant Model Access
