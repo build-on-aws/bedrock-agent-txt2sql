@@ -32,9 +32,26 @@ Alternatively, this README will walk you through the step-by-step process to set
 - Access will need to be granted to the **Titan Embeddings G1 - Text** and **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
 
 
-## Diagram
+## Architecture Diagram
 
 ![Diagram](images/diagram.png)
+
+1. The Amazon Bedrock agent endpoint serves as the bridge between the user's application that runs on an Amazon EC2 instance on AWS and the Amazon Bedrock agent, facilitating the transfer of input data in real-time. This setup is essential for capturing inputs that trigger the agent driven process. Natural language is used to query data, and return the response back to the user via the user interface.
+
+2. An instruction prompt is provided to the Amazon Bedrock agent to help with orchestration. The Amazon Bedrock agent orchestrates the tasks by interpreting the input prompt and delegating specific actions to the LLM. 
+
+3. Collaboration with the task orchestrater in the previous step enables the LLM to process complex queries and generate outputs that align with the user's objectives. The chain of thought mechanism ensures that each step in the process is logically connected, leading to precise action execution. The model processes the user's natural language input, translating it into actionable SQL queries, which are then used to interact with data services.
+
+4. The main purpose of an action group in an Amazon Bedrock agent is to provide a structured way to perform multiple actions in response to a user's input or request. This allows the agent to take a series of coordinated steps to address the user's needs, rather than just performing a single action. This action group includes an OpenAPI schema which is needed so that the Amazon Bedrock agent knows the format structure and parameters needed for the action group to interact with the compute layer, in this case, a Lambda function.
+
+5. The AWS Lambda function acts as the execution engine, processing the SQL query and interfacing with Amazon Athena. Proper configuration of resource policies and permissions is critical to ensure secure and efficient operations, maintaining the integrity of the serverless compute environment.
+
+6. Amazon Athena is a serverless, query service that makes it easy to analyze data in Amazon S3 via AWS Glue using standard SQL. This optimized search engine assists in querying unstructured data from Amazon S3. All results from an SQL query is stored in an Amazon S3 bucket.
+
+7. AWS Glue will read the unstructured data from Amazon S3, then create tables that will be used by Amazon Athena for querying. The use of crawlers and the AWS Glue Data Catalog simplifies data management, making it easier to integrate and query diverse datasets, in this case an Amazon S3 bucket.
+
+8. Company data is loaded into Amazon S3, which  serves as the data source for AWS Glue. It is the location where the raw, unstructured data is stored. In this example, we are using .csv files, but virtually any format can be used. 
+
 
 ## Cost
 You are responsible for the cost of the AWS services used while running this Guidance. As of October 2024, the cost for running this Guidance with the default settings in the US West (Oregon) AWS Region is approximately $17.94 per month for processing 100,000 request.
