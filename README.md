@@ -140,9 +140,7 @@ Click here to download template 3 🚀 - [3 - EC2 UI Stack](https://github.com/b
 
 ![athena 3](images/athena3.png)
 
-***Step 4***
-
-### Testing the Bedrock Agent
+## Testing the Bedrock Agent
 
 - Navigate to the Bedrock console. Go to the toggle on the left, and under **Builder tools** select ***Agents***, then the `athena-agent` that was created.
 
