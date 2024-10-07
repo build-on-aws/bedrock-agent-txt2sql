@@ -70,9 +70,10 @@ We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/lat
 |---------------------------------------|-------------------------------------------|-------------|
 | EC2 Instance (t3.small)               | Running an EC2 instance 24/7 per month    | $17.74      |
 | AWS Lambda                            | 100k Invocations per month                | ~$0.20       |
-| Amazon Bedrock Anthropic Claude 3 Haiku (Input)  | Per 1k tokens (750 on average)            | $0.00025    |
-| Amazon Bedrock Anthropic Claude 3 Haiku (Output) | Per 1k tokens (750 on average)            | $0.00125    |
-
+| Amazon Bedrock Anthropic Claude 3 Haiku (Input)  | Per 1m tokens (750k words on average)            | $250    |
+| Amazon Bedrock Anthropic Claude 3 Haiku (Output) | Per 2m tokens (750 words on average)            | $500    |
+| Amazon S3 (Storage  | Company reports total size is 1.1 KB            | <$1   |
+| Amazon Athena | $5.00 per TB of data scanned            | <$1   |
 
 ### Grant Model Access
 
