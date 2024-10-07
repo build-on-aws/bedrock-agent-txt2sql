@@ -1,7 +1,24 @@
 
 # Setup Amazon Bedrock Agent for Text-to-SQL Using Amazon Athena with Streamlit
 
-## Introduction
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Prerequisites](#prerequisites)
+3. [Diagram](#diagram)
+4. [Grant Model Access](#grant-model-access)
+5. [Deploy Resources via AWS CloudFormation](#deploy-resources-via-aws-cloudformation)
+6. [Step-by-step Configuration and Setup](#step-by-step-configuration-and-setup)
+   - [Step 1: Creating S3 Buckets](#step-1-creating-s3-buckets)
+   - [Step 2: Setup Amazon Athena](#step-2-setup-amazon-athena)
+   - [Step 3: Lambda Function Configuration](#step-3-lambda-function-configuration)
+   - [Step 4: Setup Bedrock Agent and Action Group](#step-4-setup-bedrock-agent-and-action-group)
+7. [Testing the Bedrock Agent](#testing-the-bedrock-agent)
+8. [Step 7: Setup and Run Streamlit App on EC2 (Optional)](#step-7-setup-and-run-streamlit-app-on-ec2-optional)
+9. [Cleanup](#cleanup)
+10. [Security](#security)
+11. [License](#license)
+
+## Overview
 In this project, we will set up an Amazon Bedrock agent with an action group that can translate natural language queries (NLQ) into SQL queries. The agent will query an Amazon Athena database, but the concept can be extended to most SQL databases.
 
 For those who prefer an Infrastructure-as-Code (IaC) solution, we provide an AWS CloudFormation template that will deploy all the necessary resources. If you would like to deploy via AWS CloudFormation, please refer to the guide in the section below.
