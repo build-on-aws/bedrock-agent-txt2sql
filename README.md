@@ -44,7 +44,7 @@ We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/lat
 | AWS Service                           | Dimensions                                | Cost [USD]  |
 |---------------------------------------|-------------------------------------------|-------------|
 | EC2 Instance (t3.small)               | Running an EC2 instance 24/7 per month    | $17.74      |
-| AWS Lambda                            | 100k Invocations per month                | $0.68       |
+| AWS Lambda                            | 100k Invocations per month                | ~$0.20       |
 | Amazon Bedrock Anthropic Claude 3 Haiku (Input)  | Per 1k tokens (750 on average)            | $0.00025    |
 | Amazon Bedrock Anthropic Claude 3 Haiku (Output) | Per 1k tokens (750 on average)            | $0.00125    |
 
