@@ -555,7 +555,7 @@ Your configuration should look like the following:
 
 
 
-- Now we will need to modify the **Advanced prompts**. While your still in edit mode, Scroll dow to the advanced prompts section, and select `Edit`.
+- Now we will need to modify the **Advanced prompts**. While your still in edit mode, Scroll down to the advanced prompts section, and select `Edit`.
 
 ![ad prompt btn](images/advance_prompt_btn.png)
 
