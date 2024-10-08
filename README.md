@@ -75,7 +75,7 @@ We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/lat
 | Amazon S3 (Simple Storage Service)  | Company reports total size is 1.1 KB            | <$1   |
 | Amazon Athena | $5.00 per TB of data scanned            | <$1   |
 
-### Grant Model Access
+## Grant Model Access
 
 - We will need to grant access to the models that will be needed for the Amazon Bedrock agent. Navigate to the Amazon Bedrock console, then on the left of the screen, scroll down and select **Model access**. On the right, select the orange **Enable specific models** button.
 
