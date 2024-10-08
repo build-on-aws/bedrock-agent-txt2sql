@@ -1,7 +1,7 @@
 
 # Guidance: Setup Amazon Bedrock Agent for Text-to-SQL Using Amazon Athena with Streamlit
 
-## Table of Contents
+### Table of Contents
 1. [Introduction](#introduction)
 2. [Solution Overview](#solution-overview)
 3. [Prerequisites](#prerequisites)
