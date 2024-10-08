@@ -36,7 +36,7 @@ AWS Glue supports this process by reading unstructured data from Amazon S3, crea
 
 ## Prerequisites
 - An active AWS Account.
-- Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon Cloud9.
+- Familiarity with AWS services like Amazon Bedrock, Amazon S3, AWS Lambda, Amazon Athena, and Amazon EC2.
 - Access will need to be granted to the **Titan Embeddings G1 - Text** and **Anthropic: Claude 3 Haiku** model from the Amazon Bedrock console.
 
 
