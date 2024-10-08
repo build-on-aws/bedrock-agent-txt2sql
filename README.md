@@ -62,7 +62,7 @@ AWS Glue supports this process by reading unstructured data from Amazon S3, crea
 
 
 ## Cost
-You are responsible for the cost of the AWS services used while running this Guidance. As of October 2024, the cost for running this Guidance with the default settings in the US West (Oregon) AWS Region is approximately $767.94 per month for processing 100,000 request.
+You are responsible for the cost of the AWS services used while running this Guidance. As of October 2024, the cost for running this Guidance with the default settings in the US West (Oregon) AWS Region is approximately $592.94 per month for processing 100,000 requests with an an input/output token count average of 700K.
 
 We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance.
 
@@ -70,8 +70,8 @@ We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/lat
 |---------------------------------------|-------------------------------------------|-------------|
 | EC2 Instance (t3.small)               | Running an EC2 instance 24/7 per month    | $17.74      |
 | AWS Lambda                            | 100k Invocations per month                | ~$0.20       |
-| Amazon Bedrock Anthropic Claude 3 Haiku ***(Input)***  | 1M tokens per month (750K words on average)            | $250    |
-| Amazon Bedrock Anthropic Claude 3 Haiku ***(Output)*** | 2M tokens per month (1.5M words on average)            | $500    |
+| Amazon Bedrock Anthropic Claude 3 Haiku ***(Input)***  | 300K tokens per month (~200K words on average)            | $75    |
+| Amazon Bedrock Anthropic Claude 3 Haiku ***(Output)*** | 400K tokens per month (~280K words on average)            | $500    |
 | Amazon S3 (Simple Storage Service)  | Total size of company reports is 1.1 KB            | <$1   |
 | Amazon Athena | $5.00 per TB of data scanned            | <$1   |
 
