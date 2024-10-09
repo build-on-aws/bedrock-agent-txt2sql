@@ -717,9 +717,9 @@ After completing the setup and testing of the Bedrock Agent and Streamlit app, f
 - In the Bedrock console, navigate to 'Agents'.
 - Select the created agent, then choose 'Delete'.
 
-4.	Clean Up Cloud9 Environment:
-- Navigate to the Cloud9 management console.
-- Select the Cloud9 environment you created, then delete.
+4.	Clean Up EC2 Environment:
+- Navigate to the EC2 management console.
+- Select the EC2 instance created, then delete.
 
 
 ## Security
