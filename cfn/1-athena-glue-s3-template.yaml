@@ -1,0 +1,378 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  AWS CloudFormation template to create Athena resources with AWS Glue, S3 buckets, and data copy from specified URLs
+
+Parameters:
+  AthenaDatabaseName:
+    Type: String
+    Default: 'athena_db'
+  Alias:
+    Type: String
+    Default: '{ENTER ALIAS}'
+    Description: Alias is used for naming conventions for resources.
+
+Resources:
+  ReplicationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+  LoggingBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'logging-bucket-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  ReplicationDestinationBucketResource:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'sl-replication-${Alias}-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'sl-data-store-${Alias}-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: 'logs/'
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled  
+      ReplicationConfiguration:
+        Role: !GetAtt ReplicationRole.Arn
+        Rules:
+          - Id: "ReplicationRule1"
+            Status: Enabled
+            Prefix: ""
+            Destination:
+              Bucket: !Join ['', ['arn:aws:s3:::', !Ref ReplicationDestinationBucketResource]]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  AthenaOutputBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Sub 'sl-athena-output-${Alias}-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: 'logs/'
+      ObjectLockEnabled: true
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled          
+      ReplicationConfiguration:
+        Role: !GetAtt ReplicationRole.Arn
+        Rules:
+          - Id: "ReplicationRule2"
+            Status: Enabled
+            Prefix: ""
+            Destination:
+              Bucket: !Join ['', ['arn:aws:s3:::', !Ref ReplicationDestinationBucketResource]]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  GlueDatabase:
+    Type: 'AWS::Glue::Database'
+    Properties:
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseInput:
+        Name: !Ref AthenaDatabaseName
+
+  GlueServiceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: glue.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref GlueServicePolicy
+
+  GlueServicePolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - 's3:ListBucket'
+            Resource: 
+              - !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+              - !Join ['', ['arn:aws:s3:::', !Ref S3Bucket]]
+              - !Join ['', ['arn:aws:s3:::', !Ref AthenaOutputBucket, '/*']]
+              - !Join ['', ['arn:aws:s3:::', !Ref AthenaOutputBucket]]
+          - Effect: Allow
+            Action:
+              - 'glue:CreateCrawler'
+              - 'glue:StartCrawler'
+              - 'glue:GetCrawler'
+              - 'glue:DeleteCrawler'
+            Resource: !Sub "arn:aws:glue:${AWS::Region}:${AWS::AccountId}:crawler/*"
+
+  LambdaExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - !Ref LambdaS3AccessPolicy
+
+  LambdaS3AccessPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+            Resource: 
+              - !Join ['', ['arn:aws:s3:::', !Ref S3Bucket, '/*']]
+              - !Join ['', ['arn:aws:s3:::', !Ref S3Bucket]]
+              - !Join ['', ['arn:aws:s3:::', !Ref AthenaOutputBucket, '/*']]
+              - !Join ['', ['arn:aws:s3:::', !Ref AthenaOutputBucket]]
+          - Effect: Allow
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*"
+          - Effect: Allow
+            Action:
+              - 'sqs:SendMessage'
+            Resource: !GetAtt CopyDataDLQ.Arn
+
+  CopyDataDLQ:
+    Type: 'AWS::SQS::Queue'
+    Properties:
+      QueueName: !Sub "CopyDataDLQ-${AWS::StackName}-${AWS::Region}"
+
+  CopyDataLambda:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: python3.12
+      MemorySize: 1024
+      Timeout: 120
+      DeadLetterConfig:
+        TargetArn: !GetAtt CopyDataDLQ.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import urllib3
+          import os
+          import logging
+          import cfnresponse
+          import time
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def handler(event, context):
+              try:
+                  s3 = boto3.client('s3')
+                  bucket = os.environ.get('S3BucketName')
+                  
+                  urls = {
+                      "customers/mock-data-customers.csv": "https://github.com/build-on-aws/bedrock-agent-txt2sql/raw/main/S3data/mock-data-customers.csv",
+                      "procedures/mock-data-procedures.csv": "https://github.com/build-on-aws/bedrock-agent-txt2sql/raw/main/S3data/mock-data-procedures.csv"
+                  }
+                  
+                  http = urllib3.PoolManager()
+                  
+                  for key, url in urls.items():
+                      response = http.request('GET', url)
+                      if response.status == 200:
+                          s3.put_object(Bucket=bucket, Key=key, Body=response.data)
+                          logger.info(f"Successfully uploaded {key} to {bucket}")
+                      else:
+                          logger.error(f"Failed to download {url}, status code: {response.status}")
+                          cfnresponse.send(event, context, cfnresponse.FAILED, {'Status': 'Failed'})
+                          return
+                  time.sleep(2)
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {'Status': 'Success'})
+              except Exception as e:
+                  logger.error(f"Error: {str(e)}")
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {'Status': 'Failed', 'Error': str(e)})
+                  return {"status": "failed", "error": str(e)}
+      Environment:
+        Variables:
+          S3BucketName: !Ref S3Bucket
+
+  CopyDataCustomResource:
+    Type: 'Custom::CopyData'
+    Properties:
+      ServiceToken: !GetAtt CopyDataLambda.Arn
+      S3BucketName: !Ref S3Bucket
+  
+  GlueCrawlerCustomers:
+    Type: 'AWS::Glue::Crawler'
+    DependsOn: CopyDataCustomResource
+    Properties:
+      DatabaseName: !Ref AthenaDatabaseName
+      Name: !Sub "${AthenaDatabaseName}-crawler-customers"
+      Role: !GetAtt GlueServiceRole.Arn
+      Targets:
+        S3Targets:
+          - Path: !Join ['', ['s3://', !Ref S3Bucket, '/customers/']]
+      TablePrefix: 'customers_'
+  
+  GlueCrawlerProcedures:
+    Type: 'AWS::Glue::Crawler'
+    DependsOn: CopyDataCustomResource
+    Properties:
+      DatabaseName: !Ref AthenaDatabaseName
+      Name: !Sub "${AthenaDatabaseName}-crawler-procedures"
+      Role: !GetAtt GlueServiceRole.Arn
+      Targets:
+        S3Targets:
+          - Path: !Join ['', ['s3://', !Ref S3Bucket, '/procedures/']]
+      TablePrefix: 'procedures_'
+
+  GlueTableCustomers:
+    Type: 'AWS::Glue::Table'
+    DependsOn: GlueCrawlerCustomers
+    Properties: 
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseName: !Ref AthenaDatabaseName
+      TableInput: 
+        Name: 'customers'
+        Description: 'Customers table'
+        StorageDescriptor: 
+          Columns: 
+            - Name: 'Cust_Id'
+              Type: 'int'
+            - Name: 'Customer'
+              Type: 'string'
+            - Name: 'Balance'
+              Type: 'int'
+            - Name: 'Past_Due'
+              Type: 'int'
+            - Name: 'Vip'
+              Type: 'string'
+          Location: !Join ['', ['s3://', !Ref S3Bucket, '/customers/']]
+          InputFormat: 'org.apache.hadoop.mapred.TextInputFormat'
+          OutputFormat: 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+          SerdeInfo: 
+            SerializationLibrary: 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+            Parameters: 
+              'field.delim': ','
+          Parameters: 
+            'classification': 'csv'
+        TableType: 'EXTERNAL_TABLE'
+        Parameters: 
+          'EXTERNAL': 'TRUE'
+  
+  GlueTableProcedures:
+    Type: 'AWS::Glue::Table'
+    DependsOn: GlueCrawlerProcedures
+    Properties: 
+      CatalogId: !Ref 'AWS::AccountId'
+      DatabaseName: !Ref AthenaDatabaseName
+      TableInput: 
+        Name: 'procedures'
+        Description: 'Procedures table'
+        StorageDescriptor: 
+          Columns: 
+            - Name: 'Procedure_Id'
+              Type: 'string'
+            - Name: 'Procedure'
+              Type: 'string'
+            - Name: 'Category'
+              Type: 'string'
+            - Name: 'Price'
+              Type: 'int'
+            - Name: 'Duration'
+              Type: 'int'
+            - Name: 'Insurance'
+              Type: 'string'
+            - Name: 'Customer_Id'
+              Type: 'int'
+          Location: !Join ['', ['s3://', !Ref S3Bucket, '/procedures/']]
+          InputFormat: 'org.apache.hadoop.mapred.TextInputFormat'
+          OutputFormat: 'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+          SerdeInfo: 
+            SerializationLibrary: 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+            Parameters: 
+              'field.delim': ','
+          Parameters: 
+            'classification': 'csv'
+        TableType: 'EXTERNAL_TABLE'
+        Parameters: 
+          'EXTERNAL': 'TRUE'
+  
+Outputs:
+  AthenaDatabaseName:
+    Description: 'Name of the Athena database created'
+    Value: !Ref AthenaDatabaseName
+
+  S3BucketName:
+    Description: 'Name of the S3 bucket created'
+    Value: !Ref S3Bucket
+
+  AthenaOutputBucketName:
+    Description: 'Name of the S3 bucket for Athena query results'
+    Value: !Ref AthenaOutputBucket
+
+  ReplicationDestinationBucketName:
+    Description: 'Name of the replication destination bucket'
+    Value: !Ref ReplicationDestinationBucketResource
