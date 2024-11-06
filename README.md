@@ -44,21 +44,19 @@ AWS Glue supports this process by reading unstructured data from Amazon S3, crea
 
 ![Diagram](images/diagram.png)
 
-1. The Amazon Bedrock agent endpoint serves as the bridge between the user's application that runs on an Amazon EC2 instance on AWS and the Amazon Bedrock agent, facilitating the transfer of input data in real-time. This setup is essential for capturing inputs that trigger the agent driven process. Natural language is used to query data, and return the response back to the user via the user interface.
+1. Company data is loaded into Amazon S3, which  serves as the data source for AWS Glue.
 
-2. An instruction prompt is provided to the Amazon Bedrock agent to help with orchestration. The Amazon Bedrock agent orchestrates the tasks by interpreting the input prompt and delegating specific actions to the LLM. 
+2. Amazon Athena is a serverless query service that analyzes S3 data using standard SQL, with AWS Glue managing the data catalog. AWS Glue reads unstructured data from S3, creates queryable tables for Athena, and stores query results back in S3. This integration, supported by crawlers and the Glue Data Catalog, streamlines data management and analysis.
 
-3. Collaboration with the task orchestrater in the previous step enables the LLM to process complex queries and generate outputs that align with the user's objectives. The chain of thought mechanism ensures that each step in the process is logically connected, leading to precise action execution. The model processes the user's natural language input, translating it into actionable SQL queries, which are then used to interact with data services.
+3. The AWS Lambda function acts as the execution engine, processing the SQL query and interfacing with Amazon Athena. Proper configuration of resource policies and permissions is critical to ensure secure and efficient operations, maintaining the integrity of the serverless compute environment.
 
 4. The main purpose of an action group in an Amazon Bedrock agent is to provide a structured way to perform multiple actions in response to a user's input or request. This allows the agent to take a series of coordinated steps to address the user's needs, rather than just performing a single action. This action group includes an OpenAPI schema which is needed so that the Amazon Bedrock agent knows the format structure and parameters needed for the action group to interact with the compute layer, in this case, a Lambda function.
 
-5. The AWS Lambda function acts as the execution engine, processing the SQL query and interfacing with Amazon Athena. Proper configuration of resource policies and permissions is critical to ensure secure and efficient operations, maintaining the integrity of the serverless compute environment.
+5. An instruction prompt is provided to the Amazon Bedrock agent to help with orchestration. The Amazon Bedrock agent orchestrates the tasks by interpreting the input prompt and delegating specific actions to the LLM. 
 
-6. Amazon Athena is a serverless, query service that makes it easy to analyze data in Amazon S3 via AWS Glue using standard SQL. This optimized search engine assists in querying unstructured data from Amazon S3. All results from an SQL query is stored in an Amazon S3 bucket.
+6. Collaboration with the task orchestrater in the previous step enables the LLM to process complex queries and generate outputs that align with the user's objectives. The chain of thought mechanism ensures that each step in the process is logically connected, leading to precise action execution. The model processes the user's natural language input, translating it into actionable SQL queries, which are then used to interact with data services.
 
-7. AWS Glue will read the unstructured data from Amazon S3, then create tables that will be used by Amazon Athena for querying. The use of crawlers and the AWS Glue Data Catalog simplifies data management, making it easier to integrate and query diverse datasets, in this case an Amazon S3 bucket.
-
-8. Company data is loaded into Amazon S3, which  serves as the data source for AWS Glue. It is the location where the raw, unstructured data is stored. In this example, we are using .csv files, but virtually any format can be used. 
+7. The Amazon Bedrock agent endpoint serves as the bridge between the user's application that runs on an Amazon EC2 instance on AWS and the Amazon Bedrock agent, facilitating the transfer of input data in real-time. This setup is essential for capturing inputs that trigger the agent driven process. Natural language is used to query data, and return the response back to the user via the user interface. The results from the Athena query is returned to the user from the Lambda function through the Amazon Bedrock agent endpoint.
 
 
 ## Cost
