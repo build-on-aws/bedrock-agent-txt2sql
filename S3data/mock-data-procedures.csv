@@ -1,4 +1,4 @@
-Procedure_Id,Procedure,Category,Price,Duration(Minutes),Insurance_Covered, Customer_Id
+Procedure_Id,Procedure,Category,Price,Duration(Minutes),Insurance_Covered,Customer_Id
 0001,General Consultation,consultation,100,30,yes,001
 0002,X-Ray,imaging,200,15,no,001
 0003,Blood Test,laboratory,50,10,yes,002
