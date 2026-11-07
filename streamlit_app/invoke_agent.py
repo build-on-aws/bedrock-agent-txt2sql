@@ -106,7 +106,7 @@ def decode_response(response):
     for line in response.iter_content():
         try:
             string += line.decode(encoding='utf-8')
-        except:
+        except UnicodeDecodeError:
             continue
 
     print("Decoded response", string)
